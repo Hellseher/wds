@@ -1,0 +1,30 @@
+#+Title: Weg des Schwertes
+#+Author: Sharlatan Hellseher
+#+Email: sharlatanus@gmail.com
+
+#+Options: ToC:nil
+
+
+* First steps
+It's better to learn it once and spend less time in Google.
+The best place to begin with, if you already install Emacs and
+copy this file to one of default directory for Emacs settigs.
+
+#+name: user-init-file-names
+#+begin_src elisp
+  (default "~/.emacs")
+  (~/_emacs (file-truename "~/_emacs"))
+  (~/_emacs.el (file-truename "~/_emacs.el"))
+  (~/_emacs.elc (file-truename "~/_emacs.elc"))
+  (~/.emacs (file-truename "~/.emacs"))
+  (~/.emacs.el (file-truename "~/.emacs.el"))
+  (~/.emacs.elc (file-truename "~/.emacs.elc"))
+  (~/.emacs.d/init.el (file-truename "~/.emacs.d/init.el"))
+  (~/.emacs.d/init.elc (file-truename "~/.emacs.d/init.elc"))
+#+end_src
+
+** Ormod
+
+** Visual
+
+** Language support
