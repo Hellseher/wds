@@ -1,15 +1,20 @@
-#+Title: WDS
-#+Author: Sharlatan Hellseher
-#+Email: sharlatanus@gmail.com
+# File          : README.org
+# Created       : Mon 08 Aug 2016 02:03:48
+# Last Modified : Mon 08 Aug 2016 02:07:29 sharlatan
+# Author        : sharlatan <sharlatanus@gmail.com>
+# Maintainer    : sharlatan
+# Short         : Manual dairy and installation bundle for Emacs.
 
 #+Options: ToC:nil
 
+#+Title: WDS
+
 /Weg des Schwertes/
 
-* First steps
+* Prologue
 It's better to learn it once and  spend less time in Google.  The best
 place to begin  with, if you already install Emacs  and copy this file
-to one of default directory for Emacs settigs.
+to one of default directory for Emacs settings.
 
 #+name: user-init-file-names
 #+begin_src elisp
