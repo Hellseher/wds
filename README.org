@@ -1,14 +1,15 @@
-#+Title: Weg des Schwertes
+#+Title: WDS
 #+Author: Sharlatan Hellseher
 #+Email: sharlatanus@gmail.com
 
 #+Options: ToC:nil
 
+/Weg des Schwertes/
 
 * First steps
-It's better to learn it once and spend less time in Google.
-The best place to begin with, if you already install Emacs and
-copy this file to one of default directory for Emacs settigs.
+It's better to learn it once and  spend less time in Google.  The best
+place to begin  with, if you already install Emacs  and copy this file
+to one of default directory for Emacs settigs.
 
 #+name: user-init-file-names
 #+begin_src elisp
@@ -23,8 +24,12 @@ copy this file to one of default directory for Emacs settigs.
   (~/.emacs.d/init.elc (file-truename "~/.emacs.d/init.elc"))
 #+end_src
 
-** Ormod
+** Org-mod
 
 ** Visual
 
 ** Language support
+** References
+- [[https://github.com/purcell/emacs.d][A reasonable Emacs config]]
+- [[https://github.com/zahardzhan/well-tuned-emacs][Well Tuned Emacs]]
+- [[https://github.com/sachac/.emacs.d/blob/gh-pages/Sacha.org][Sacha Chua's Emacs configuration]]
