@@ -1,1 +1,0 @@
-# weg-des-schwertes
