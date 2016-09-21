@@ -1,6 +1,6 @@
 ;;; init-local.el -- Custom local variables and functios.
 ;;; Created       : Thu 11 Aug 2016 22:32:01
-;;; Last Modified : Mon 12 Sep 2016 22:49:47 sharlatan
+;;; Last Modified : Wed 21 Sep 2016 23:32:15 sharlatan
 ;;; Author        : Sharlatan <sharlatanus@gmail.com>
 ;;; Maintainer(s) : Sharlatan
 ;;; Commentary:
@@ -55,7 +55,6 @@ Toggles between: “all lower”, “Init Caps”, “ALL CAPS”."
 ;;; Evil-mode
 (setq evil-toggle-key "C-'")
 (require-package 'evil)
-(evil-mode 1)
 
 ;;; Org-mode
 (require-package 'org-beautify-theme)
