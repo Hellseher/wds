@@ -1,23 +1,25 @@
 # File          : readme.org
 # Created       : mon 08 aug 2016 02:03:48
-# Last Modified : Tue 09 Aug 2016 23:00:53 sharlatan
+# Last Modified : Sat 24 Sep 2016 23:14:25 sharlatan
 # author        : sharlatan <sharlatanus@gmail.com>
 # maintainer    : sharlatan
 # short         : manual dairy and installation bundle for emacs.
 
-#+options: toc:nil
+#+OPTIONS: toc:nil
 
-#+title: wds
+#+TITLE: WDS: Emacs Configuration
 
-/weg des schwertes/
+#+BEGIN_QUOTE
+
+#+END_QUOTE
 
 * Prologue
-It's better to learn it once and  spend less time in google.  the best
+It's better to learn it once and  spend less time in google.  The best
 place to begin  with, if you already install emacs  and copy this file
 to one of default directory for emacs settings.
 
 #+NAME: user-init-file-names
-#+beGIN_SRC elisp
+#+BEGIN_SRC elisp
   (default "~/.emacs")
   (~/_emacs (file-truename "~/_emacs"))
   (~/_emacs.el (file-truename "~/_emacs.el"))
@@ -31,10 +33,10 @@ to one of default directory for emacs settings.
 
 ** org-mod
 
-** visual
+** Visual
 
-** language support
-** references
+** Language support
+** References
 - [[https://github.com/purcell/emacs.d][A Reasonable Emacs Config]]
 - [[https://github.com/zahardzhan/well-tuned-emacs][Well Tuned Emacs]]
 - [[https://github.com/sachac/.emacs.d/blob/gh-pages/sacha.org][Sacha Chua's Emacs Configuration]]

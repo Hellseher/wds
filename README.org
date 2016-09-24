@@ -1,9 +1,19 @@
 # File          : README.org
 # Created       : [2016-09-10 Sat 20:45]
-# Last Modified : Wed 21 Sep 2016 23:53:07 sharlatan
+# Last Modified : Sat 24 Sep 2016 23:14:25 sharlatan
 # Author        : Hellseher <sharlatanus@gmail.com>
 # Maintainer(s) :
 # Short :
 
 * Weg des Schwertes
 /剣の道/
+
+#+BEGIN_QUOTE
+In everything I seek to grasp
+The fundamental:
+The daily choice, the daily task,
+The sentimental.
+#+END_QUOTE
+
+
+Repository of my IT way of config/set up/hacks.
