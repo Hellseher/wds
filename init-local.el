@@ -1,6 +1,6 @@
 ;;; init-local.el -- Custom local variables and functios.
 ;;; Created       : Thu 11 Aug 2016 22:32:01
-;;; Last Modified : Wed 21 Sep 2016 23:32:15 sharlatan
+;;; Last Modified : Sun 25 Sep 2016 21:30:42 sharlatan
 ;;; Author        : Sharlatan <sharlatanus@gmail.com>
 ;;; Maintainer(s) : Sharlatan
 ;;; Commentary:
@@ -59,20 +59,23 @@ Toggles between: “all lower”, “Init Caps”, “ALL CAPS”."
 ;;; Org-mode
 (require-package 'org-beautify-theme)
 (require-package 'org-bullets)
-(add-hook 'org-mode-hook (lambda () ( org-bullets-mode 1)))
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
-(defun todo-move-to-top ()
+(defun exellenz/org-todo-move-to-top ()
   "Move TODO entery to the top ot the file when it is DONE."
   (interactive)
-  (save-excursion)
-  (org-cut-special)
-  (goto-char (point-min))
-  (search-forward "DONE")
-  (forward-line -1)
-  (org-yank))
+  (save-excursion
+    (org-cut-special)
+    (goto-char (point-min))
+    (search-forward "DONE")
+    (beginning-of-line)
+    (org-yank)))
+
+(after-load 'org
+  (define-key org-mode-map (kbd "C-c C-x t") 'exellenz/org-todo-move-to-top))
 
 
-;;; Yasnippet
+;;; yasnippet
 ;;; http://joaotavora.github.io/yasnippet/
 (require-package 'yasnippet)
 (yas-global-mode 1)
