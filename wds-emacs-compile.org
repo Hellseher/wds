@@ -1,0 +1,125 @@
+# File          : wds-emacs-compile.org
+# Created       : Tue 27 Sep 2016 21:27:15
+# Last Modified : Tue 27 Sep 2016 22:27:30 sharlatan
+# Author        : sharlatan <sharlatanus@gmail.com>
+# Maintainer    : sharlatan
+# Short         : Emacs compiling tips.
+
+* RPM family
+As I'm a long turm user for Fedora distribution I'll discribe
+compilation for it first
+
+** Fedora
+Compiling of Emacs 25.1Tested on Fedora 23
+
+Required *-devel packages to compile with all benifits. You can find a
+list of lib*.rpm packages installed on my machine in ~lib_devel_fedora_rpm~
+file and complete list of *-devel pacages in ~all_devel_fedora_rpm~
+
+#+BEGIN_SRC sh
+[ sharlatan@base201215.ws ]:$ uname -smr
+Linux 4.7.2-101.fc23.x86_64 x86_64
+
+[ sharlatan@base201215.ws ]:$ sudo rpm -qa \
+ | grep "devel"  | grep "lib" | grep -oP ".+[a-z](?=-[0-9])"
+compat-libuv010-devel
+ghc-zlib-devel
+giflib-devel
+glib2-devel
+glibc-devel
+glib-devel
+keyutils-libs-devel
+libcom_err-devel
+libdb-devel
+libdrm-devel
+libffi-devel
+libICE-devel
+libicu-devel
+libjpeg-turbo-devel
+libpng-devel
+libquadmath-devel
+libRmath-devel
+libselinux-devel
+libsepol-devel
+libSM-devel
+libstdc++-devel
+libtiff-devel
+libuv-devel
+libverto-devel
+libX11-devel
+libXau-devel
+libxcb-devel
+libXcomposite-devel
+libXcursor-devel
+libXdamage-devel
+libXext-devel
+libXfixes-devel
+libXft-devel
+libXi-devel
+libXinerama-devel
+libXpm-devel
+libXrandr-devel
+libXrender-devel
+libXt-devel
+libXxf86vm-devel
+mesa-libEGL-devel
+mesa-libGL-devel
+mesa-libGLU-devel
+texlive-kpathsea-lib-devel
+zlib-devel
+#+END_SRC
+
+And after ./autogen.sh and ./configure you may see this text
+
+#+BEGIN_EXAMPLE
+Where should the build process find the source code?    .
+  What compiler should emacs be built with?               gcc -g3 -O2
+  Should Emacs use the GNU version of malloc?             yes
+      (Using Doug Lea's new malloc from the GNU C Library.)
+  Should Emacs use a relocating allocator for buffers?    no
+  Should Emacs use mmap(2) for buffer allocation?         no
+  What window system should Emacs use?                    x11
+  What toolkit should Emacs use?                          GTK2
+  Where do we find X Windows header files?                Standard dirs
+  Where do we find X Windows libraries?                   Standard dirs
+  Does Emacs use -lXaw3d?                                 no
+  Does Emacs use -lXpm?                                   yes
+  Does Emacs use -ljpeg?                                  yes
+  Does Emacs use -ltiff?                                  yes
+  Does Emacs use a gif library?                           yes -lgif
+  Does Emacs use a png library?                           yes -lpng16
+  Does Emacs use -lrsvg-2?                                no
+  Does Emacs use cairo?                                   no
+  Does Emacs use imagemagick?                             no
+  Does Emacs support sound?                               yes
+  Does Emacs use -lgpm?                                   no
+  Does Emacs use -ldbus?                                  no
+  Does Emacs use -lgconf?                                 no
+  Does Emacs use GSettings?                               yes
+  Does Emacs use a file notification library?             yes -lglibc (inotify)
+  Does Emacs use access control lists?                    no
+  Does Emacs use -lselinux?                               yes
+  Does Emacs use -lgnutls?                                no
+  Does Emacs use -lxml2?                                  no
+  Does Emacs use -lfreetype?                              yes
+  Does Emacs use -lm17n-flt?                              no
+  Does Emacs use -lotf?                                   no
+  Does Emacs use -lxft?                                   yes
+  Does Emacs directly use zlib?                           yes
+  Does Emacs have dynamic modules support?                no
+  Does Emacs use toolkit scroll bars?                     yes
+  Does Emacs support Xwidgets (requires gtk3)?            no
+#+END_EXAMPLE
+
+Try to install now!
+#+BEGIN_SRC sh
+make
+sudo make install
+#+END_SRC
+
+* References
+- Building Emacs https://www.emacswiki.org/emacs/BuildingEmacs
+- Official INSTALL http://repo.or.cz/w/emacs.git/blob_plain/HEAD:/INSTALL
+- Compiling emacs on CentOS https://tiborsimon.io/blog/tools/compiling-emacs-on-centos/
+
+# End of wds-emacs-compile.org
