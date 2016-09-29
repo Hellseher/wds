@@ -1,6 +1,6 @@
 # File          : wds-emacs-compile.org
 # Created       : Tue 27 Sep 2016 21:27:15
-# Last Modified : Tue 27 Sep 2016 22:27:30 sharlatan
+# Last Modified : Wed 28 Sep 2016 21:37:18 sharlatan
 # Author        : sharlatan <sharlatanus@gmail.com>
 # Maintainer    : sharlatan
 # Short         : Emacs compiling tips.
@@ -21,105 +21,210 @@ file and complete list of *-devel pacages in ~all_devel_fedora_rpm~
 Linux 4.7.2-101.fc23.x86_64 x86_64
 
 [ sharlatan@base201215.ws ]:$ sudo rpm -qa \
- | grep "devel"  | grep "lib" | grep -oP ".+[a-z](?=-[0-9])"
-compat-libuv010-devel
-ghc-zlib-devel
-giflib-devel
-glib2-devel
-glibc-devel
-glib-devel
-keyutils-libs-devel
-libcom_err-devel
-libdb-devel
-libdrm-devel
-libffi-devel
-libICE-devel
-libicu-devel
-libjpeg-turbo-devel
-libpng-devel
-libquadmath-devel
-libRmath-devel
-libselinux-devel
-libsepol-devel
-libSM-devel
-libstdc++-devel
-libtiff-devel
-libuv-devel
-libverto-devel
-libX11-devel
-libXau-devel
-libxcb-devel
-libXcomposite-devel
-libXcursor-devel
-libXdamage-devel
-libXext-devel
-libXfixes-devel
-libXft-devel
-libXi-devel
-libXinerama-devel
-libXpm-devel
-libXrandr-devel
-libXrender-devel
-libXt-devel
-libXxf86vm-devel
-mesa-libEGL-devel
-mesa-libGL-devel
-mesa-libGLU-devel
-texlive-kpathsea-lib-devel
-zlib-devel
+ | grep "devel"  | grep "lib" | grep -oP ".+[a-z](?=-[0-9])" | sort | nl
+     1	compat-libuv010-devel
+     2	ghc-glib-devel
+     3	ghc-zlib-devel
+     4	giflib-devel
+     5	glib2-devel
+     6	glibc-devel
+     7	glib-devel
+     8	glibmm24-devel
+     9	kdelibs-devel
+    10	kdelibs-webkit-devel
+    11	keyutils-libs-devel
+    12	libacl-devel
+    13	libattr-devel
+    14	libcom_err-devel
+    15	libdb-devel
+    16	libdrm-devel
+    17	libepoxy-devel
+    18	libffi-devel
+    19	libICE-devel
+    20	libicu-devel
+    21	libidn-devel
+    22	libjpeg-turbo-devel
+    23	libotf-devel
+    24	libpng-devel
+    25	libquadmath-devel
+    26	libRmath-devel
+    27	librsvg2-devel
+    28	libselinux-devel
+    29	libsepol-devel
+    30	libsigc++20-devel
+    31	libSM-devel
+    32	libsoup-devel
+    33	libstdc++-devel
+    34	libtasn1-devel
+    35	libtiff-devel
+    36	libuv-devel
+    37	libverto-devel
+    38	libwayland-client-devel
+    39	libwayland-cursor-devel
+    40	libwebp-devel
+    41	libX11-devel
+    42	libXau-devel
+    43	libXaw3dXft-devel-1.6.2d
+    44	libxcb-devel
+    45	libXcomposite-devel
+    46	libXcursor-devel
+    47	libXdamage-devel
+    48	libXext-devel
+    49	libXfixes-devel
+    50	libXft-devel
+    51	libXi-devel
+    52	libXinerama-devel
+    53	libxkbcommon-devel
+    54	libxkbfile-devel
+    55	libxml2-devel
+    56	libXmu-devel
+    57	libXpm-devel
+    58	libXrandr-devel
+    59	libXrender-devel
+    60	libXScrnSaver-devel
+    61	libXt-devel
+    62	libXtst-devel
+    63	libXv-devel
+    64	libXxf86misc-devel
+    65	libXxf86vm-devel
+    66	m17n-lib-devel
+    67	mesa-libEGL-devel
+    68	mesa-libGL-devel
+    69	mesa-libGLU-devel
+    70	mesa-libwayland-egl-devel
+    71	texlive-kpathsea-lib-devel
+    72	zlib-devel
 #+END_SRC
 
-And after ./autogen.sh and ./configure you may see this text
+And after ~./autogen.sh~
+#+BEGIN_SRC sh
+[ sharlatan@base201215.ws ]:$ time ./autogen.sh
+Checking whether you have the necessary tools...
+(Read INSTALL.REPO for more details on building Emacs)
+
+Checking for autoconf (need at least version 2.65)...
+ok
+Checking for automake (need at least version 1.11)...
+ok
+Your system has the required tools.
+Running 'autoreconf -fi -I m4' ...
+You can now run './configure'.
+
+real	0m9.388s
+user	0m8.101s
+sys	0m0.395s
+#+END_SRC
+
+and ~./configure~ you may see this text
 
 #+BEGIN_EXAMPLE
-Where should the build process find the source code?    .
-  What compiler should emacs be built with?               gcc -g3 -O2
-  Should Emacs use the GNU version of malloc?             yes
-      (Using Doug Lea's new malloc from the GNU C Library.)
-  Should Emacs use a relocating allocator for buffers?    no
-  Should Emacs use mmap(2) for buffer allocation?         no
-  What window system should Emacs use?                    x11
-  What toolkit should Emacs use?                          GTK2
-  Where do we find X Windows header files?                Standard dirs
-  Where do we find X Windows libraries?                   Standard dirs
-  Does Emacs use -lXaw3d?                                 no
-  Does Emacs use -lXpm?                                   yes
-  Does Emacs use -ljpeg?                                  yes
-  Does Emacs use -ltiff?                                  yes
-  Does Emacs use a gif library?                           yes -lgif
-  Does Emacs use a png library?                           yes -lpng16
-  Does Emacs use -lrsvg-2?                                no
-  Does Emacs use cairo?                                   no
-  Does Emacs use imagemagick?                             no
-  Does Emacs support sound?                               yes
-  Does Emacs use -lgpm?                                   no
-  Does Emacs use -ldbus?                                  no
-  Does Emacs use -lgconf?                                 no
-  Does Emacs use GSettings?                               yes
-  Does Emacs use a file notification library?             yes -lglibc (inotify)
-  Does Emacs use access control lists?                    no
-  Does Emacs use -lselinux?                               yes
-  Does Emacs use -lgnutls?                                no
-  Does Emacs use -lxml2?                                  no
-  Does Emacs use -lfreetype?                              yes
-  Does Emacs use -lm17n-flt?                              no
-  Does Emacs use -lotf?                                   no
-  Does Emacs use -lxft?                                   yes
-  Does Emacs directly use zlib?                           yes
-  Does Emacs have dynamic modules support?                no
-  Does Emacs use toolkit scroll bars?                     yes
-  Does Emacs support Xwidgets (requires gtk3)?            no
+[ sharlatan@base201215.ws ]:$ time ./configure tim--with-modules --with-cairo --with-x-toolkit=lucid | nl
+
+...
+
+   437	  Where should the build process find the source code?    .
+   438	  What compiler should emacs be built with?               gcc -g3 -O2
+   439	  Should Emacs use the GNU version of malloc?             yes
+   440	      (Using Doug Lea's new malloc from the GNU C Library.)
+   441	  Should Emacs use a relocating allocator for buffers?    no
+   442	  Should Emacs use mmap(2) for buffer allocation?         no
+   443	  What window system should Emacs use?                    x11
+   444	  What toolkit should Emacs use?                          LUCID
+   445	  Where do we find X Windows header files?                Standard dirs
+   446	  Where do we find X Windows libraries?                   Standard dirs
+   447	  Does Emacs use -lXaw3d?                                 yes
+   448	  Does Emacs use -lXpm?                                   yes
+   449	  Does Emacs use -ljpeg?                                  yes
+   450	  Does Emacs use -ltiff?                                  yes
+   451	  Does Emacs use a gif library?                           yes -lgif
+   452	  Does Emacs use a png library?                           yes -lpng16
+   453	  Does Emacs use -lrsvg-2?                                yes
+   454	  Does Emacs use cairo?                                   yes
+   455	  Does Emacs use imagemagick?                             yes
+   456	  Does Emacs support sound?                               yes
+   457	  Does Emacs use -lgpm?                                   yes
+   458	  Does Emacs use -ldbus?                                  yes
+   459	  Does Emacs use -lgconf?                                 yes
+   460	  Does Emacs use GSettings?                               yes
+   461	  Does Emacs use a file notification library?             yes -lglibc (inotify)
+   462	  Does Emacs use access control lists?                    yes -lacl
+   463	  Does Emacs use -lselinux?                               yes
+   464	  Does Emacs use -lgnutls?                                yes
+   465	  Does Emacs use -lxml2?                                  yes
+   466	  Does Emacs use -lfreetype?                              yes
+   467	  Does Emacs use -lm17n-flt?                              yes
+   468	  Does Emacs use -lotf?                                   yes
+   469	  Does Emacs use -lxft?                                   yes
+   470	  Does Emacs directly use zlib?                           yes
+   471	  Does Emacs have dynamic modules support?                yes
+   472	  Does Emacs use toolkit scroll bars?                     yes
+   473	  Does Emacs support Xwidgets (requires gtk3)?            no
+
+...
+
+real	0m27.279s
+user	0m14.730s
+sys	0m8.011s
 #+END_EXAMPLE
 
-Try to install now!
+Time to Compile...
 #+BEGIN_SRC sh
-make
-sudo make install
+[ sharlatan@base201215.ws ]:$ time make | nl
+     1	make -C lib all
+     2	make[1]: Entering directory '/home/sharlatan/Downloads/emacs-25.1/emacs-25.1/lib'
+     3	  GEN      alloca.h
+     4	  GEN      c++defs.h
+     5	  GEN      arg-nonnull.h
+     6	  GEN      warn-on-use.h
+     7	  GEN      dirent.h
+     8	  GEN      fcntl.h
+     9	  GEN      inttypes.h
+    10	  GEN      signal.h
+    11	  GEN      stdio.h
+    12	  GEN      stdlib.h
+    13	  GEN      string.h
+    14	  GEN      sys/select.h
+    15	  GEN      sys/stat.h
+    16	  GEN      sys/time.h
+    17	  GEN      sys/types.h
+    18	  GEN      time.h
+    19	  GEN      unistd.h
+
+...
+
+   244	  GEN      info/dir
+   245	make[1]: Leaving directory '/home/sharlatan/Downloads/emacs-25.1/emacs-25.1'
+
+
+real	1m23.710s
+user	1m19.177s
+sys	0m4.550s
+#+END_SRC
+
+And finnaly install it!
+#+BEGIN_SRC sh
+[ sharlatan@base201215.ws ]:$ time sudo make install | nl
+     1	make -C lib all
+     2	make[1]: Entering directory '/home/sharlatan/Downloads/emacs-25.1/emacs-25.1/lib'
+     3	make  all-am
+...
+
+  4305	make -C lib-src may-be-blessmail
+  4306	make[1]: Entering directory '/home/sharlatan/Downloads/emacs-25.1/emacs-25.1/lib-src'
+  4307	make[1]: Nothing to be done for 'maybe-blessmail'.
+  4308	make[1]: Leaving directory '/home/sharlatan/Downloads/emacs-25.1/emacs-25.1/lib-src'
+
+
+real	0m15.930s
+user	0m10.175s
+sys	0m4.687s
 #+END_SRC
 
 * References
 - Building Emacs https://www.emacswiki.org/emacs/BuildingEmacs
 - Official INSTALL http://repo.or.cz/w/emacs.git/blob_plain/HEAD:/INSTALL
 - Compiling emacs on CentOS https://tiborsimon.io/blog/tools/compiling-emacs-on-centos/
+- Introduction to Emacs modules http://diobla.info/blog-archive/modules-tut.html
+- https://gist.github.com/favadi/18438172892bc4178b27
 
 # End of wds-emacs-compile.org
