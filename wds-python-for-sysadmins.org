@@ -1,0 +1,13 @@
+# File          : wds-python-for-sysamin.org
+# Created       : Tue 11 Oct 2016 23:24:38
+# Last Modified : Tue 11 Oct 2016 23:30:16 sharlatan
+# Author        : sharlatan <sharlatanus@gmail.com>
+# Maintainer    : sharlatan
+# Short         : Comparation python with shell scripting.
+
+
+| Distribution             | shell  | python                    |
+|--------------------------+--------+---------------------------|
+| Curent working directory | pwd    | os.getcwd()               |
+| List files/directories   | ls -la | os.listdir("path_to_dir") |
+|                          |        |                           |
