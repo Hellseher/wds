@@ -1,6 +1,6 @@
 # File          : wds-python-for-sysamin.org
 # Created       : Tue 11 Oct 2016 23:24:38
-# Last Modified : Tue 18 Oct 2016 23:28:00 sharlatan
+# Last Modified : Wed 19 Oct 2016 20:36:13 sharlatan
 # Author        : sharlatan <sharlatanus@gmail.com>
 # Maintainer    : sharlatan
 # Short         : Comparation python with shell scripting.
@@ -12,7 +12,7 @@ Main modules of Python usuful for system programming
                  input/output/error pipes, and obtain their return
                  codes.
 #+BEGIN_SRC python
-  #!/usr/bin/env python
+и  #!/usr/bin/env python
   # -*- coding: utf-8 -*-
 
   # Default templates for Python scripts.
@@ -24,7 +24,8 @@ Main modules of Python usuful for system programming
       main()
 #+END_SRC
 * Comparation
-** gnu-core-utils
+** gnu-core-utils [[][🔗]]
+🔗
 
 | cmd           | Disctiption                                                               | Python        | in     | out    | Example |
 |---------------+---------------------------------------------------------------------------+---------------+--------+--------+---------|
