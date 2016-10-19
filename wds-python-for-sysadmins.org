@@ -1,6 +1,6 @@
 # File          : wds-python-for-sysamin.org
 # Created       : Tue 11 Oct 2016 23:24:38
-# Last Modified : Wed 19 Oct 2016 22:39:18 sharlatan
+# Last Modified : Thu 20 Oct 2016 00:01:59 sharlatan
 # Author        : sharlatan <sharlatanus@gmail.com>
 # Maintainer    : sharlatan
 # Short         : Comparation python with shell scripting.
@@ -8,9 +8,14 @@
 * Intro
 Main modules of Python usuful for system programming
 
+- os ::	Miscellaneous operating system interfaces.
+- os.path :: Operations on pathnames.
 - subprocess ::  allows you to spawn new processes, connect to their
                  input/output/error pipes, and obtain their return
                  codes.
+- sys :: Access system-specific parameters and functions.
+
+/general template of script file/
 #+BEGIN_SRC python
 и  #!/usr/bin/env python
   # -*- coding: utf-8 -*-
@@ -23,6 +28,29 @@ Main modules of Python usuful for system programming
   if __name__ == '__main__':
       main()
 #+END_SRC
+
+Your scrip has to note what version is on the system and minimal or
+exact required version. Better run it before all main module will be
+loaded.
+#+BEGIN_SRC python
+  #!/usr/bin/env python
+
+  import sys
+
+  py_min_version = 0x02060000
+  py_exact_version = 0x020600
+
+  if sys.hexversion < py_min_version:
+      sys.exit("Python 2.6 or newer is required to run this script.")
+
+  if sys.hexversion != py_exact_version:
+      sys.exit("Python 2.6 required to run this script.")
+
+  # body of the script
+  # ...
+  # end of the script
+#+END_SRC
+
 * Comparation
 ** gnu-core-utils [[https://www.gnu.org/software/coreutils/manual/coreutils.html][🔗]]
 
@@ -219,5 +247,7 @@ Main modules of Python usuful for system programming
   *Python for Unix and Linux System Administration*
   O'Reilly 2008
 
+
 + Python documentation https://docs.python.org/
 + IPython Interactive Computing https://www.ipython.org
++ Code Like a Pythonista: Idiomatic Python http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html#module-structure
