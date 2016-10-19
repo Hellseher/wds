@@ -1,6 +1,6 @@
 # File          : wds-python-for-sysamin.org
 # Created       : Tue 11 Oct 2016 23:24:38
-# Last Modified : Wed 19 Oct 2016 20:36:13 sharlatan
+# Last Modified : Wed 19 Oct 2016 20:39:59 sharlatan
 # Author        : sharlatan <sharlatanus@gmail.com>
 # Maintainer    : sharlatan
 # Short         : Comparation python with shell scripting.
@@ -24,11 +24,11 @@ Main modules of Python usuful for system programming
       main()
 #+END_SRC
 * Comparation
-** gnu-core-utils [[][🔗]]
-🔗
+** gnu-core-utils [[https://www.gnu.org/software/coreutils/manual/coreutils.html][🔗]]
+
 
 | cmd           | Disctiption                                                               | Python        | in     | out    | Example |
-|---------------+---------------------------------------------------------------------------+---------------+--------+--------+---------|
+|--------------+---------------------------------------------------------------------------+---------------+--------+--------+--------- |
 | cp (1)        | copy files and directories                                                | shutil.copy() | str    | n/a    |         |
 | dd (1)        | convert and copy a file                                                   |               |        |        |         |
 | df (1)        | report file system disk space usage                                       |               |        |        |         |
