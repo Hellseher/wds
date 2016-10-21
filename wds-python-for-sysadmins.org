@@ -1,14 +1,14 @@
 # File          : wds-python-for-sysamin.org
 # Created       : Tue 11 Oct 2016 23:24:38
-# Last Modified : Fri 21 Oct 2016 01:06:16 sharlatan
+# Last Modified : Fri 21 Oct 2016 01:12:53 sharlatan
 # Author        : sharlatan <sharlatanus@gmail.com>
 # Maintainer    : sharlatan
 # Short         : Comparation python with shell scripting.
 
 * Intro
-Main modules of Python usuful for system programming
+Main modules of Python useful for system programming
 
-** Standard libraries
+** Buildin Modules[fn:1]
 - os ::	Miscellaneous operating system interfaces.
 - os.path :: Operations on pathnames.
 - subprocess ::  allows you to spawn new processes, connect to their
@@ -16,7 +16,7 @@ Main modules of Python usuful for system programming
                  codes.
 - sys :: Access system-specific parameters and functions.
 
-** Extenal libraries
+** Extenal Modules
 - [[http://www.fabfile.org/][Fabric]] :: library and command-line tool for streamlining the use of
             SSH for application deployment or systems administration
             tasks.
@@ -271,3 +271,7 @@ be loaded.
 + IPython Interactive Computing https://www.ipython.org
 + Code Like a Pythonista: Idiomatic Python http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html#module-structure
 + Google Python Style Guide https://google.github.io/styleguide/pyguide.html
+
+* Footnotes
+
+[fn:1] Python Module Index https://docs.python.org/3/py-modindex.html
