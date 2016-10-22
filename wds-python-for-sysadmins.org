@@ -1,20 +1,25 @@
 # File          : wds-python-for-sysamin.org
 # Created       : Tue 11 Oct 2016 23:24:38
-# Last Modified : Fri 21 Oct 2016 01:12:53 sharlatan
+# Last Modified : Sat 22 Oct 2016 23:15:16 sharlatan
 # Author        : sharlatan <sharlatanus@gmail.com>
 # Maintainer    : sharlatan
 # Short         : Comparation python with shell scripting.
 
 * Intro
-Main modules of Python useful for system programming
+Main modules and templates  useful for system programming.
 
 ** Buildin Modules[fn:1]
 - os ::	Miscellaneous operating system interfaces.
 - os.path :: Operations on pathnames.
+- platform :: Retrieves as much platform identifying data as possible.
+- socket :: provides access to the BSD socket interface. It is
+            available on all modern Unix systems, Windows, MacOS, and
+            probably additional platforms.
 - subprocess ::  allows you to spawn new processes, connect to their
                  input/output/error pipes, and obtain their return
                  codes.
 - sys :: Access system-specific parameters and functions.
+- uuid ::
 
 ** Extenal Modules
 - [[http://www.fabfile.org/][Fabric]] :: library and command-line tool for streamlining the use of
@@ -25,6 +30,9 @@ Main modules of Python useful for system programming
 - [[https://pexpect.readthedocs.io/en/stable/][Pexpect]] :: is a pure Python module for spawning child applications;
              controlling them; and responding to expected patterns in
              their output. Pexpect works like Don Libes’ Expect.
+- [[https://pypi.python.org/pypi/psutil][Psutil]] :: a cross-platform process and system utilities module.
+- [[https://pypi.python.org/pypi/netifaces/][netifaces]] :: portable network interface information
+- Scapy ::
 
 ** General templaes
 /General template of script file/
@@ -69,7 +77,8 @@ be loaded.
 #+END_SRC
 
 * Comparation
-** gnu-core-utils [[https://www.gnu.org/software/coreutils/manual/coreutils.html][🔗]]
+** Linux
+*** gnu-core-utils [[https://www.gnu.org/software/coreutils/manual/coreutils.html][*]]
 
 
 | cmd           | Description                                                               | Python          | in     | out    | Example |
@@ -179,7 +188,7 @@ be loaded.
 | sha384sum (1) | compute and check SHA384 message digest                                   |                 |        |        |         |
 | sha512sum (1) | compute and check SHA512 message digest                                   | hashlib         | module | module |         |
 
-** gnu-bash-builtin
+*** gnu-bash-builtin
 
 
 | cmd       | Description                                                        | Python    | in          | out | Example |
@@ -260,7 +269,7 @@ be loaded.
 | variables | Common shell variable names and usage.                             |           |             |     |         |
 |           |                                                                    |           |             |     |         |
 
-** utils-linux
+*** utils-linux
 * References
 + Noah Gift and Jeremy M. Jones
   *Python for Unix and Linux System Administration*
