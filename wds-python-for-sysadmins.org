@@ -1,6 +1,6 @@
 # File          : wds-python-for-sysamin.org
 # Created       : Tue 11 Oct 2016 23:24:38
-# Last Modified : Sat 22 Oct 2016 23:15:16 sharlatan
+# Last Modified : Sun 23 Oct 2016 18:39:46 sharlatan
 # Author        : sharlatan <sharlatanus@gmail.com>
 # Maintainer    : sharlatan
 # Short         : Comparation python with shell scripting.
@@ -8,34 +8,36 @@
 * Intro
 Main modules and templates  useful for system programming.
 
-** Buildin Modules[fn:1]
+** Build-in Modules[fn:1]
 - os ::	Miscellaneous operating system interfaces.
 - os.path :: Operations on pathnames.
 - platform :: Retrieves as much platform identifying data as possible.
-- socket :: provides access to the BSD socket interface. It is
-            available on all modern Unix systems, Windows, MacOS, and
-            probably additional platforms.
+- socket :: provides access to the BSD socket interface. It is available on all
+            modern Unix systems, Windows, MacOS, and probably additional
+            platforms.
 - subprocess ::  allows you to spawn new processes, connect to their
-                 input/output/error pipes, and obtain their return
-                 codes.
+                 input/output/error pipes, and obtain their return codes.
 - sys :: Access system-specific parameters and functions.
-- uuid ::
+- re :: provides regular expression matching operations similar to those found
+        in Perl
+- tarfile :: module makes it possible to read and write tar archives, including
+             those using gzip, bz2 and lzma compression.
 
-** Extenal Modules
-- [[http://www.fabfile.org/][Fabric]] :: library and command-line tool for streamlining the use of
-            SSH for application deployment or systems administration
-            tasks.
-- [[http://www.paramiko.org/][Paramiko]]  :: implementation of the SSHv2 protocol, providing
-               both client and server functionality.
+** External Modules
+- [[http://www.fabfile.org/][Fabric]] :: library and command-line tool for streamlining the use of SSH for
+            application deployment or systems administration tasks.
+- [[http://www.paramiko.org/][Paramiko]]  :: implementation of the SSHv2 protocol, providing both client and
+               server functionality.
 - [[https://pexpect.readthedocs.io/en/stable/][Pexpect]] :: is a pure Python module for spawning child applications;
-             controlling them; and responding to expected patterns in
-             their output. Pexpect works like Don Libes’ Expect.
+             controlling them; and responding to expected patterns in their
+             output. Pexpect works like Don Libes’ Expect.
 - [[https://pypi.python.org/pypi/psutil][Psutil]] :: a cross-platform process and system utilities module.
 - [[https://pypi.python.org/pypi/netifaces/][netifaces]] :: portable network interface information
 - Scapy ::
 
-** General templaes
-/General template of script file/
+** General Templates
+
+/Main template of script file/
 #+BEGIN_SRC python
   #!/usr/bin/env python
   # -*- coding: utf-8 -*-
@@ -49,11 +51,10 @@ Main modules and templates  useful for system programming.
       main()
 #+END_SRC
 
-Your scrip has to awere of what version is on the system and minimal
-or exact required version. Better run it before all main modules will
-be loaded.
+Your scrip has to aware of what version is on the system and minimal or exact
+required version. Better run it before all main modules will be loaded.
 
-/Inscript version check to avaid future conflicts/
+/In script version check to avoid future conflicts/
 #+BEGIN_SRC python
   #!/usr/bin/env python
   # -*- coding: utf-8 -*-
@@ -70,13 +71,82 @@ be loaded.
   if sys.hexversion != PYMIN:
       sys.exit("Python 2.6 required to run this script.")
 
-  # body of the script
+  # script body
   # ...
   # end of the script
 
 #+END_SRC
 
-* Comparation
+There are a lot of ways to open a files in Python, here is more reliable more
+error-tolerant way I found.
+
+/Open file in Python script/
+#+BEGIN_SRC python
+  #!/usr/bin/env python
+  # -*- coding: utf-8 -*-
+
+  # Read from a file.
+  with open('path_to_your_file') as internal_name:
+      used_in_script_name = internal_name.read()
+
+  # script body
+  # ...
+  # Do something with used_in_script_name
+  # ...
+  # end of the script
+#+END_SRC
+
+/Write to file: Example N1/
+#+BEGIN_SRC python
+  #!/usr/bin/env python
+  # -*- coding: utf-8 -*-
+
+  # Write to a file.
+  with open('path_to_your_file', 'w') as internal_name:
+      internal_name.write("write_your_data_to_file\n")
+
+  # script body
+  # ...
+  # end of the sript
+#+END_SRC
+
+/Write to file: Example N2/
+#+BEGIN_SRC python
+  #!/usr/bin/env python
+  # -*- coding: utf-8 -*-
+
+  try:
+      f = open('path_to_your_file', 'w')
+      f.write('write_your_data_to_file\n')
+  finally:
+      f.close()
+
+  # script body
+  # ...
+  # end of the script
+#+END_SRC
+
+Most of the tasks for system administration need to be done as a root/supper
+user on *nix systems.
+
+/Check whether user is a root: Example N1/
+#+BEGIN_SRC python
+  #!/usr/bin/env python
+  # -*- coding: utf-8 -*-
+
+  import os
+  import sys
+
+
+  if not os.getuid() == 0:
+      sys.exit("Script must be run as root.")
+
+  # script body
+  # ...
+  # end of the script
+#+END_SRC
+
+* Comparison
 ** Linux
 *** gnu-core-utils [[https://www.gnu.org/software/coreutils/manual/coreutils.html][*]]
 
@@ -269,17 +339,19 @@ be loaded.
 | variables | Common shell variable names and usage.                             |           |             |     |         |
 |           |                                                                    |           |             |     |         |
 
-*** utils-linux
+*** utils-linuxn
 * References
+** Books
 + Noah Gift and Jeremy M. Jones
   *Python for Unix and Linux System Administration*
   O'Reilly 2008
-
-
+** Links
 + Python documentation https://docs.python.org/
 + IPython Interactive Computing https://www.ipython.org
 + Code Like a Pythonista: Idiomatic Python http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html#module-structure
 + Google Python Style Guide https://google.github.io/styleguide/pyguide.html
+** Sourse Hubs
++ https://github.com/pcsforeducation/Sysadmin-scripts
 
 * Footnotes
 
