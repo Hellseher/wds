@@ -1,6 +1,6 @@
 ;;; init-local.el -- Custom local variables and functios.
 ;;; Created       : Thu 11 Aug 2016 22:32:01
-;;; Last Modified : Sun 25 Sep 2016 21:30:42 sharlatan
+;;; Last Modified : <2016-10-30 Sun 21:11:12 GMT> sharlatan
 ;;; Author        : Sharlatan <sharlatanus@gmail.com>
 ;;; Maintainer(s) : Sharlatan
 ;;; Commentary:
@@ -10,8 +10,10 @@
 ;;; Code:
 
 ;;; Time stemtp in the header when save the file
-(setq
- time-stamp-pattern "8/Last Modified[ \t]*:\\\\?[ \t]*%03a %02d %03b %04y %02H:%02M:%02S %u\\\\?$")
+;; <Yar-month-day weekday Time Zone> username
+;; TODO: how to insert WEEK number?
+(setq time-stamp-pattern
+      "8/Last Modified[ \t]*:\\\\?[ \t]*<%04Y-%:m-%02d %03a %02H:%02M:%02S %Z> %u\\\\?$" )
 
 (add-hook 'before-save-hook 'time-stamp)
 
@@ -51,12 +53,33 @@ Toggles between: “all lower”, “Init Caps”, “ALL CAPS”."
 
 ;;set this to C-x M-c
 (global-set-key (kbd "C-x M-c") 'toggle-letter-case)
+
+(defun swap-windows ()
+  "If you have 2 windows, it swaps them."
+  (interactive)
+  (cond ((/= (count-windows) 2)
+         (message "You need exactly 2 windows to do this."))
+        (t
+         (let* ((w1 (first (window-list)))
+                (w2 (second (window-list)))
+                (b1 (window-buffer w1))
+                (b2 (window-buffer w2))
+                (s1 (window-start w1))
+                (s2 (window-start w2)))
+           (set-window-buffer w1 b2)
+           (set-window-buffer w2 b1)
+           (set-window-start w1 s2)
+           (set-window-start w2 s1))))
+  (other-window 1))
+(global-set-key (kbd "C-c s") 'swap-windows)
 
 ;;; Evil-mode
 (setq evil-toggle-key "C-'")
 (require-package 'evil)
 
 ;;; Org-mode
+;;
+;; http://ehneilsen.net/notebook/orgExamples/org-examples.html
 (require-package 'org-beautify-theme)
 (require-package 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
@@ -65,22 +88,47 @@ Toggles between: “all lower”, “Init Caps”, “ALL CAPS”."
   "Move TODO entery to the top ot the file when it is DONE."
   (interactive)
   (save-excursion
-    (org-cut-special)
-    (goto-char (point-min))
-    (search-forward "DONE")
-    (beginning-of-line)
-    (org-yank)))
+    (progn
+      (org-cut-special)
+      (goto-char (point-min))
+      (if (search-forward "* DONE" nil 't)
+          (progn
+            (beginning-of-line)
+            (org-yank))
+        (goto-char (point-min))
+        (beginning-of-line)
+        (forward-line 10)
+        (org-yank)))))
 
 (after-load 'org
   (define-key org-mode-map (kbd "C-c C-x t") 'exellenz/org-todo-move-to-top))
+
+;;; flycheck
+;; http://www.flycheck.org/en/latest/
+(after-load 'python
+  (flychek-checker 'python-pylint))
 
 
-;;; yasnippet
-;;; http://joaotavora.github.io/yasnippet/
+;;;Yas-snipets
+;; http://joaotavora.github.io/yasnippet/
 (require-package 'yasnippet)
 (yas-global-mode 1)
+;; Default snippet path
+(setq yas-snippet-dirs (file-expand-wildcards "~/.emacs.d/elpa/yasnippet*/snippets"))
+(setq yas-snippet-dirs (append yas-snippet-dirs
+                               '("~/.emacs.d/snippets")))
+
+;;; tramp
+;; https://www.gnu.org/software/tramp/
 
-;;; Circe
-(require-package 'circe)
+(after-load 'tramp
+  (setq tramp-default-method "ssh"))
+
+
+;;; Guix
+;; https://www.gnu.org/software/guix/
+                                        ;(add-to-list 'load-path "~/.guix-profile/share/emacs/site-lisp/")
+                                        ;(require 'guix-autoload)
+
 (provide 'init-local)
 ;;; init-local.el ends here
