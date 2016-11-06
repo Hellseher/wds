@@ -1,6 +1,6 @@
 ;;; init-local.el -- Custom local variables and functios.
 ;;; Created       : Thu 11 Aug 2016 22:32:01
-;;; Last Modified : <2016-10-30 Sun 21:11:12 GMT> sharlatan
+;;; Last Modified : <2016-11-05 Sat 23:58:08 GMT> sharlatan
 ;;; Author        : Sharlatan <sharlatanus@gmail.com>
 ;;; Maintainer(s) : Sharlatan
 ;;; Commentary:
@@ -105,8 +105,7 @@ Toggles between: “all lower”, “Init Caps”, “ALL CAPS”."
 
 ;;; flycheck
 ;; http://www.flycheck.org/en/latest/
-(after-load 'python
-  (flychek-checker 'python-pylint))
+
 
 
 ;;;Yas-snipets
@@ -129,6 +128,18 @@ Toggles between: “all lower”, “Init Caps”, “ALL CAPS”."
 ;; https://www.gnu.org/software/guix/
                                         ;(add-to-list 'load-path "~/.guix-profile/share/emacs/site-lisp/")
                                         ;(require 'guix-autoload)
+
+(defun exellenz/hl-insert ()
+  "Insert dashed horisotnal line."
+  (interactive)
+  (progn
+    (insert-char #x002D 78)
+    (comment-region (line-beginning-position) (line-end-position) )))
+
+(defun exellenz/timestamp ()
+  "Insert timestamp mdHMS"
+  (interactive)
+  (insert (format-time-string "%y%m%d%H%M%S")))
 
 (provide 'init-local)
 ;;; init-local.el ends here
