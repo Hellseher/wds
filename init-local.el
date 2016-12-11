@@ -1,6 +1,6 @@
 ;;; init-local.el -- Custom local variables and functios.
 ;;; Created       : Thu 11 Aug 2016 22:32:01
-;;; Last Modified : <2016-11-05 Sat 23:58:08 GMT> sharlatan
+;;; Last Modified : <2016-12-11 Sun 23:04:03 GMT> sharlatan
 ;;; Author        : Sharlatan <sharlatanus@gmail.com>
 ;;; Maintainer(s) : Sharlatan
 ;;; Commentary:
@@ -16,6 +16,8 @@
       "8/Last Modified[ \t]*:\\\\?[ \t]*<%04Y-%:m-%02d %03a %02H:%02M:%02S %Z> %u\\\\?$" )
 
 (add-hook 'before-save-hook 'time-stamp)
+
+(require-package 'midnight)
 
 
 ;; http://ergoemacs.org/emacs/modernization_upcase-word.html
@@ -84,24 +86,7 @@ Toggles between: “all lower”, “Init Caps”, “ALL CAPS”."
 (require-package 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
-(defun exellenz/org-todo-move-to-top ()
-  "Move TODO entery to the top ot the file when it is DONE."
-  (interactive)
-  (save-excursion
-    (progn
-      (org-cut-special)
-      (goto-char (point-min))
-      (if (search-forward "* DONE" nil 't)
-          (progn
-            (beginning-of-line)
-            (org-yank))
-        (goto-char (point-min))
-        (beginning-of-line)
-        (forward-line 10)
-        (org-yank)))))
-
-(after-load 'org
-  (define-key org-mode-map (kbd "C-c C-x t") 'exellenz/org-todo-move-to-top))
+(setq org-src-fontify-natively t)
 
 ;;; flycheck
 ;; http://www.flycheck.org/en/latest/
@@ -119,7 +104,7 @@ Toggles between: “all lower”, “Init Caps”, “ALL CAPS”."
 
 ;;; tramp
 ;; https://www.gnu.org/software/tramp/
-
+(defvar tramp-default-method)
 (after-load 'tramp
   (setq tramp-default-method "ssh"))
 
@@ -128,18 +113,68 @@ Toggles between: “all lower”, “Init Caps”, “ALL CAPS”."
 ;; https://www.gnu.org/software/guix/
                                         ;(add-to-list 'load-path "~/.guix-profile/share/emacs/site-lisp/")
                                         ;(require 'guix-autoload)
+
+;;; multi-term
+;; https://www.emacswiki.org/emacs/download/multi-term.el
 
-(defun exellenz/hl-insert ()
+(require-package 'multi-term)
+(global-set-key (kbd "C-x t") 'multi-term)
+
+
+;;; Custom functios
+;;
+(defun exzellenz/hl-insert ()
   "Insert dashed horisotnal line."
   (interactive)
   (progn
     (insert-char #x002D 78)
     (comment-region (line-beginning-position) (line-end-position) )))
 
-(defun exellenz/timestamp ()
-  "Insert timestamp mdHMS"
+(defun exzellenz/timestamp ()
+  "Insert timestamp YmdHMS."
   (interactive)
   (insert (format-time-string "%y%m%d%H%M%S")))
+
+(defun exzellenz/cix--find-cmd-file ()
+  "Find a file name of the command/word under ther cursor."
+  (shell-command-to-string
+   (concat "find ./ -type f -name \"*org\" -exec grep -lP \"^\\*\\* "
+           (thing-at-point 'word)
+           "\\s\" {} \\;")))
+
+(defun exzellenz/cix-create-link-to-cmd ()
+  "Insert a link to command under cursor."
+  (interactive)
+  (progn
+    (beginning-of-line)
+    (insert "[[file:"(exzellenz/cix--find-cmd-file))
+    (delete-char -1)
+    (kill-word 1)
+    (insert "::*")
+    (yank)
+    (insert "][")
+    (yank)
+    (insert "]]")))
+
+
+(defun exzellenz/org-todo-move-to-top ()
+  "Move TODO entery to the top ot the file when it is DONE."
+  (interactive)
+  (save-excursion
+    (progn
+      (org-cut-special)
+      (goto-char (point-min))
+      (if (search-forward "* DONE" nil 't)
+          (progn
+            (beginning-of-line)
+            (org-yank))
+        (goto-char (point-min))
+        (beginning-of-line)
+        (forward-line 10)
+        (org-yank)))))
+
+(after-load 'org
+  (define-key org-mode-map (kbd "C-c C-x t") 'exzellenz/org-todo-move-to-tj))
 
 (provide 'init-local)
 ;;; init-local.el ends here
