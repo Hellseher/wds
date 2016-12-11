@@ -1,54 +1,73 @@
 # File          : wds-python-for-sysamin.org
 # Created       : Tue 11 Oct 2016 23:24:38
-# Last Modified : Sun 23 Oct 2016 18:39:46 sharlatan
+# Last Modified : <2016-11-12 Sat 00:34:09 GMT> sharlatan
 # Author        : sharlatan <sharlatanus@gmail.com>
-# Maintainer    : sharlatan
-# Short         : Comparation python with shell scripting.
+# Maintainer(s  : sharlatan
+# Short         : Comparison Python with shell scripting.
 
-* Intro
-Main modules and templates  useful for system programming.
+#+TITLE: Python for Sysadmins
+** Intro
+/Main modules and templates  useful for system programming./
 
-** Build-in Modules[fn:1]
+On most Linux distributions (Debian, Ubunty, RHL, Fedora, CentOs, etc...) the
+easiest way to install additional module is to use Python "module manager": *pip*
+See offisial documenataion for [[https://docs.python.org/3/installing/][Installing Python Modules]].
+
+#+BEGIN_EXAMPLE
+    $: pip install BeutifullSoup
+#+END_EXAMPLE
+*** Modules
+**** Build-in Modules
+https://docs.python.org/3/py-modindex.html
+
+- argparse :: module makes it easy to write user-friendly command-line
+              interfaces.
+- glob :: Unix style pathname pattern expansion
 - os ::	Miscellaneous operating system interfaces.
 - os.path :: Operations on pathnames.
 - platform :: Retrieves as much platform identifying data as possible.
+- re :: provides regular expression matching operations similar to those found
+        in Perl
 - socket :: provides access to the BSD socket interface. It is available on all
             modern Unix systems, Windows, MacOS, and probably additional
             platforms.
 - subprocess ::  allows you to spawn new processes, connect to their
                  input/output/error pipes, and obtain their return codes.
 - sys :: Access system-specific parameters and functions.
-- re :: provides regular expression matching operations similar to those found
-        in Perl
 - tarfile :: module makes it possible to read and write tar archives, including
              those using gzip, bz2 and lzma compression.
 
-** External Modules
+**** External Modules
+- [[https://www.crummy.com/software/BeautifulSoup/][BeutifullSoup]] :: HTML scraping.
 - [[http://www.fabfile.org/][Fabric]] :: library and command-line tool for streamlining the use of SSH for
             application deployment or systems administration tasks.
+- [[https://pypi.python.org/pypi/netifaces/][netifaces]] :: portable network interface information
 - [[http://www.paramiko.org/][Paramiko]]  :: implementation of the SSHv2 protocol, providing both client and
                server functionality.
 - [[https://pexpect.readthedocs.io/en/stable/][Pexpect]] :: is a pure Python module for spawning child applications;
              controlling them; and responding to expected patterns in their
              output. Pexpect works like Don Libes’ Expect.
 - [[https://pypi.python.org/pypi/psutil][Psutil]] :: a cross-platform process and system utilities module.
-- [[https://pypi.python.org/pypi/netifaces/][netifaces]] :: portable network interface information
-- Scapy ::
+- [[http://www.secdev.org/projects/scapy/][Scapy]] :: Scapy is a powerful interactive packet manipulation program. It is
+           able to forge or decode packets of a wide number of protocols.
+- [[http://docopt.org/][Docopt]] :: Command-line interface description language. Available not just for Python.
 
-** General Templates
+*** General Templates
 
 /Main template of script file/
 #+BEGIN_SRC python
   #!/usr/bin/env python
   # -*- coding: utf-8 -*-
+  # Short : << a short description of the script. >>
 
-  # Default templates for Python scripts.
 
   def main():
       print("Hello World!")
 
   if __name__ == '__main__':
       main()
+
+  # End of the script.py
 #+END_SRC
 
 Your scrip has to aware of what version is on the system and minimal or exact
@@ -146,10 +165,23 @@ user on *nix systems.
   # end of the script
 #+END_SRC
 
-* Comparison
-** Linux
-*** gnu-core-utils [[https://www.gnu.org/software/coreutils/manual/coreutils.html][*]]
+/Validate installed modules/
+#+BEGIN_SRC python
+  #!/usr/bin/env python
+  # -*- coding: utf-8 -*-
 
+  try:
+      from docopt import docopt
+  except ImportError:
+      exit("This script requires that 'docopt' is installed:\n sudo pip install \
+      docop\n https://github.com/docopt")
+
+  # end of script
+#+END_SRC
+
+** Common Packages Comparison
+*** Linux
+**** gnu-core-utils [[https://www.gnu.org/software/coreutils/manual/coreutils.html][*]]
 
 | cmd           | Description                                                               | Python          | in     | out    | Example |
 |---------------+---------------------------------------------------------------------------+-----------------+--------+--------+---------|
@@ -257,102 +289,103 @@ user on *nix systems.
 | sha256sum (1) | compute and check SHA256 message digest                                   | hashlib         | module | module |         |
 | sha384sum (1) | compute and check SHA384 message digest                                   |                 |        |        |         |
 | sha512sum (1) | compute and check SHA512 message digest                                   | hashlib         | module | module |         |
+***** Examples: gnu-core-utiles
+**** gnu-bash
 
-*** gnu-bash-builtin
 
+| cmd       | Description                                                        | Python        | in          | out  | Example |
+|-----------+--------------------------------------------------------------------+---------------+-------------+------+---------|
+| .         | Execute commands from a file in the current shell.                 | import        | module name |      |         |
+| [ ... ]   | Evaluate conditional expression (synonym "test").                  |               |             |      |         |
+| { ... }   | Group commands as a unit.                                          |               |             |      |         |
+| ( ... )   |                                                                    |               |             |      |         |
+| bg        | Move jobs to the background.                                       |               |             |      |         |
+| cd        | Change the shell working directory.                                |               |             |      |         |
+| fc        | Display or execute commands from the history list.                 |               |             |      |         |
+| fg        | Move job to the foreground.                                        |               |             |      |         |
+| if        | Execute commands based on conditional.                             | if            |             |      |         |
+| for       | Execute commands for each member in a list.                        | for           |             |      |         |
+| let       | Evaluate arithmetic expressions.                                   |               |             |      |         |
+| pwd       | Print the name of the current working directory.                   |               |             |      |         |
+| set       | Set or unset values of shell options and positional parameters.    |               |             |      |         |
+| bind      | Set Readline key bindings and variables.                           |               |             |      |         |
+| case      | Execute commands based on pattern matching.                        | elif          |             |      |         |
+| dirs      | Display directory stack.                                           |               |             |      |         |
+| echo      | Write arguments to the standard output.                            | print         |             |      |         |
+| eval      | Execute arguments as a shell command.                              |               |             |      |         |
+| exec      | Replace the shell with the given command.                          |               |             |      |         |
+| exit      | Exit the shell.                                                    |               |             |      |         |
+| hash      | Remember or display program locations.                             |               |             |      |         |
+| help      | Display information about builtin commands.                        |               |             |      |         |
+| jobs      | Display status of jobs.                                            |               |             |      |         |
+| kill      | Send a signal to a job.                                            | os.kill()     | int         | n/a  |         |
+| popd      | Remove directories from stack.                                     |               |             |      |         |
+| read      | Read a line from the standard input and split it into fields.      |               |             |      |         |
+| test      | Evaluate conditional expression.                                   |               |             |      |         |
+| time      | Report time consumed by pipeline's execution.                      |               |             |      |         |
+| trap      | Trap signals and other events.                                     |               |             |      |         |
+| type      | Display information about command type.                            |               |             |      |         |
+| wait      | Wait for job completion and return exit status.                    |               |             |      |         |
+| alias     | Define or display aliases.                                         |               |             |      |         |
+| break     | Exit for, while, or until loops.                                   |               |             |      |         |
+| false     | Return an unsuccessful result.                                     | False         | bool        | boll |         |
+| local     | Define local variables.                                            |               |             |      |         |
+| pushd     | Add directories to stack.                                          |               |             |      |         |
+| shift     | Shift positional parameters.                                       |               |             |      |         |
+| shopt     | Set and unset shell options.                                       |               |             |      |         |
+| times     | Display process times.                                             |               |             |      |         |
+| umask     | Display or set file mode mask.                                     |               |             |      |         |
+| unset     | Unset values and attributes of shell variables and functions.      |               |             |      |         |
+| until     | Execute commands as long as a test does not succeed.               |               |             |      |         |
+| while     | Execute commands as long as a test succeeds.                       | while         |             |      |         |
+| caller    | Return the context of the current subroutine call.                 |               |             |      |         |
+| coproc    | Create a coprocess named NAME.                                     |               |             |      |         |
+| disown    | Remove jobs from current shell.                                    |               |             |      |         |
+| enable    | Enable and disable shell builtins.                                 |               |             |      |         |
+| export    | Set export attribute for shell variables.                          |               |             |      |         |
+| logout    | Exit a login shell.                                                |               |             |      |         |
+| printf    | Formats and prints ARGUMENTS under control of the FORMAT.          | print, format |             |      |         |
+| return    | Return from a shell function.                                      |               |             |      |         |
+| select    | Select words from a list and execute commands.                     |               |             |      |         |
+| source    | Execute commands from a file in the current shell.                 |  import       |             |      |         |
+| ulimit    | Modify shell resource limits.                                      |               |             |      |         |
+| builtin   | Execute shell builtins.                                            |               |             |      |         |
+| command   | Execute a simple command or display information about commands.    |               |             |      |         |
+| compgen   | Display possible completions depending on the options.             |               |             |      |         |
+| compopt   | Modify or display completion options.                              |               |             |      |         |
+| declare   | Set variable values and attributes.                                |               |             |      |         |
+| getopts   | Parse option arguments.                                            |               |             |      |         |
+| history   | Display or manipulate the history list.                            |               |             |      |         |
+| mapfile   | Read lines from the standard input into an indexed array variable. |               |             |      |         |
+| suspend   | Suspend shell execution.                                           |               |             |      |         |
+| typeset   | Set variable values and attributes.                                |               |             |      |         |
+| typeset   | Set variable values and attributes.                                |               |             |      |         |
+| unalias   | Remove each NAME from the list of defined aliases.                 |               |             |      |         |
+| complete  | Specify how arguments are to be completed by Readline.             |               |             |      |         |
+| continue  | Resume for, while, or until loops.                                 |               |             |      |         |
+| function  | Define shell function.                                             |               |             |      |         |
+| readonly  | Mark shell variables as unchangeable.                              |               |             |      |         |
+| readonly  | Mark shell variables as unchangeable.                              |               |             |      |         |
+| readarray | Read lines from a file into an array variable.                     |               |             |      |         |
+| readarray | Read lines from a file into an array variable.                     |               |             |      |         |
+| variables | Common shell variable names and usage.                             |               |             |      |         |
+|           |                                                                    |               |             |      |         |
 
-| cmd       | Description                                                        | Python    | in          | out | Example |
-|-----------+--------------------------------------------------------------------+-----------+-------------+-----+---------|
-| .         | Execute commands from a file in the current shell.                 | import    | module name |     |         |
-| [ ... ]   | Evaluate conditional expression (synonym "test").                  |           |             |     |         |
-| { ... }   | Group commands as a unit.                                          |           |             |     |         |
-| ( ... )   |                                                                    |           |             |     |         |
-| bg        | Move jobs to the background.                                       |           |             |     |         |
-| cd        | Change the shell working directory.                                |           |             |     |         |
-| fc        | Display or execute commands from the history list.                 |           |             |     |         |
-| fg        | Move job to the foreground.                                        |           |             |     |         |
-| if        | Execute commands based on conditional.                             | if        |             |     |         |
-| for       | Execute commands for each member in a list.                        | for       |             |     |         |
-| let       | Evaluate arithmetic expressions.                                   |           |             |     |         |
-| pwd       | Print the name of the current working directory.                   |           |             |     |         |
-| set       | Set or unset values of shell options and positional parameters.    |           |             |     |         |
-| bind      | Set Readline key bindings and variables.                           |           |             |     |         |
-| case      | Execute commands based on pattern matching.                        | elif      |             |     |         |
-| dirs      | Display directory stack.                                           |           |             |     |         |
-| echo      | Write arguments to the standard output.                            | print     |             |     |         |
-| eval      | Execute arguments as a shell command.                              |           |             |     |         |
-| exec      | Replace the shell with the given command.                          |           |             |     |         |
-| exit      | Exit the shell.                                                    |           |             |     |         |
-| hash      | Remember or display program locations.                             |           |             |     |         |
-| help      | Display information about builtin commands.                        |           |             |     |         |
-| jobs      | Display status of jobs.                                            |           |             |     |         |
-| kill      | Send a signal to a job.                                            | os.kill() | int         | n/a |         |
-| popd      | Remove directories from stack.                                     |           |             |     |         |
-| read      | Read a line from the standard input and split it into fields.      |           |             |     |         |
-| test      | Evaluate conditional expression.                                   |           |             |     |         |
-| time      | Report time consumed by pipeline's execution.                      |           |             |     |         |
-| trap      | Trap signals and other events.                                     |           |             |     |         |
-| type      | Display information about command type.                            |           |             |     |         |
-| wait      | Wait for job completion and return exit status.                    |           |             |     |         |
-| alias     | Define or display aliases.                                         |           |             |     |         |
-| break     | Exit for, while, or until loops.                                   |           |             |     |         |
-| false     | Return an unsuccessful result.                                     |           |             |     |         |
-| local     | Define local variables.                                            |           |             |     |         |
-| pushd     | Add directories to stack.                                          |           |             |     |         |
-| shift     | Shift positional parameters.                                       |           |             |     |         |
-| shopt     | Set and unset shell options.                                       |           |             |     |         |
-| times     | Display process times.                                             |           |             |     |         |
-| umask     | Display or set file mode mask.                                     |           |             |     |         |
-| unset     | Unset values and attributes of shell variables and functions.      |           |             |     |         |
-| until     | Execute commands as long as a test does not succeed.               |           |             |     |         |
-| while     | Execute commands as long as a test succeeds.                       |           |             |     |         |
-| caller    | Return the context of the current subroutine call.                 |           |             |     |         |
-| coproc    | Create a coprocess named NAME.                                     |           |             |     |         |
-| disown    | Remove jobs from current shell.                                    |           |             |     |         |
-| enable    | Enable and disable shell builtins.                                 |           |             |     |         |
-| export    | Set export attribute for shell variables.                          |           |             |     |         |
-| logout    | Exit a login shell.                                                |           |             |     |         |
-| printf    | Formats and prints ARGUMENTS under control of the FORMAT.          |           |             |     |         |
-| return    | Return from a shell function.                                      |           |             |     |         |
-| select    | Select words from a list and execute commands.                     |           |             |     |         |
-| source    | Execute commands from a file in the current shell.                 |           |             |     |         |
-| ulimit    | Modify shell resource limits.                                      |           |             |     |         |
-| builtin   | Execute shell builtins.                                            |           |             |     |         |
-| command   | Execute a simple command or display information about commands.    |           |             |     |         |
-| compgen   | Display possible completions depending on the options.             |           |             |     |         |
-| compopt   | Modify or display completion options.                              |           |             |     |         |
-| declare   | Set variable values and attributes.                                |           |             |     |         |
-| getopts   | Parse option arguments.                                            |           |             |     |         |
-| history   | Display or manipulate the history list.                            |           |             |     |         |
-| mapfile   | Read lines from the standard input into an indexed array variable. |           |             |     |         |
-| suspend   | Suspend shell execution.                                           |           |             |     |         |
-| typeset   | Set variable values and attributes.                                |           |             |     |         |
-| typeset   | Set variable values and attributes.                                |           |             |     |         |
-| unalias   | Remove each NAME from the list of defined aliases.                 |           |             |     |         |
-| complete  | Specify how arguments are to be completed by Readline.             |           |             |     |         |
-| continue  | Resume for, while, or until loops.                                 |           |             |     |         |
-| function  | Define shell function.                                             |           |             |     |         |
-| readonly  | Mark shell variables as unchangeable.                              |           |             |     |         |
-| readonly  | Mark shell variables as unchangeable.                              |           |             |     |         |
-| readarray | Read lines from a file into an array variable.                     |           |             |     |         |
-| readarray | Read lines from a file into an array variable.                     |           |             |     |         |
-| variables | Common shell variable names and usage.                             |           |             |     |         |
-|           |                                                                    |           |             |     |         |
-
-*** utils-linuxn
-* References
-** Books
+**** utils-linux
+** References
+*** Books
 + Noah Gift and Jeremy M. Jones
   *Python for Unix and Linux System Administration*
   O'Reilly 2008
-** Links
+*** Links
 + Python documentation https://docs.python.org/
 + IPython Interactive Computing https://www.ipython.org
 + Code Like a Pythonista: Idiomatic Python http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html#module-structure
++ Sockets programming in Python https://www.ibm.com/developerworks/linux/tutorials/l-pysocks/
 + Google Python Style Guide https://google.github.io/styleguide/pyguide.html
-** Sourse Hubs
++ Dive Into Python 3 http://www.diveintopython3.net/index.html
+*** Hubs
 + https://github.com/pcsforeducation/Sysadmin-scripts
-
-* Footnotes
-
-[fn:1] Python Module Index https://docs.python.org/3/py-modindex.html
++ https://github.com/vinta/awesome-python
+*** IRCs
++ #python-unregistered was created on 2011-02-06 00:12:29
