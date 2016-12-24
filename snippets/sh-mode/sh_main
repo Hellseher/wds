@@ -1,0 +1,37 @@
+# -*- mode: snippet -*-
+# name: sh_main
+# key: shm_
+# --
+# File           : `(buffer-name)`
+# Created        : `(format-time-string "<%Y-%m-%d %a %T %Z>" (current-time))`
+# Last Modified  : `(format-time-string "<%Y-%m-%d %a %T %Z>" (current-time))`
+# Author         : `(user-login-name)`
+# Maintainer(s)  :
+# Short          :
+
+# Commentary:
+#
+
+# ------------------------------------------------------------------------------
+#+CHANGELOG
+# 0.0.1 :: `(format-time-string "<%Y-%m-%d %a %T %Z>" (current-time))`
+#       + Script initiation.
+#
+# ==============================================================================
+
+VERSION=0.0.1
+CMDNAME=`(buffer-name)`
+TIMESTAMP="$(date "+%Y%m%d%H%M%S")"
+ABS_PATH="$(dirname "$(readlink -f "$0")")"
+REQUIRE=(nc dig nmap)
+
+# ------------------------------------------------------------------------------
+#+MAIN
+
+main() {
+
+}
+
+main "$@"
+# End of `(buffer-name)`
+

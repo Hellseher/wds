@@ -1,6 +1,6 @@
 ;;; init-local.el -- Custom local variables and functios.
 ;;; Created       : Thu 11 Aug 2016 22:32:01
-;;; Last Modified : <2016-12-17 Sat 23:19:18 GMT> sharlatan
+;;; Last Modified : <2016-12-24 Sat 10:31:58 GMT> sharlatan
 ;;; Author        : Sharlatan <sharlatanus@gmail.com>
 ;;; Maintainer(s) : Sharlatan
 ;;; Commentary:
@@ -33,6 +33,14 @@
 ;;; flycheck
 ;; http://www.flycheck.org/en/latest/
 
+
+;;; GNU Global
+;; https://github.com/leoliu/ggtags
+(require-package 'ggtags)
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+              (ggtags-mode 1))))
 
 
 ;;;Yas-snipets
@@ -123,7 +131,7 @@
         (org-yank)))))
 
 (after-load 'org
-  (define-key org-mode-map (kbd "C-c C-x t") 'exzellenz/org-todo-move-to-tj))
+  (define-key org-mode-map (kbd "C-c C-x t") 'exzellenz/org-todo-move-to-top))
 
 (provide 'init-local)
 ;;; init-local.el ends here

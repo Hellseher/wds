@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: header
+# key: hd_
+# --
+# File           : `(buffer-name)`
+# Created        : `(format-time-string "<%Y-%m-%d %a %T %Z>" (current-time))`
+# Last Modified  : `(format-time-string "<%Y-%m-%d %a %T %Z>" (current-time))`
+# Author         : `(user-login-name)`
+# Maintainer(s)  :
+# Short          :
+
+#+OPTIONS: num:nil
