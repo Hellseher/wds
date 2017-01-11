@@ -1,6 +1,6 @@
 ;;; init-local.el -- Custom local variables and functios.
 ;;; Created       : Thu 11 Aug 2016 22:32:01
-;;; Last Modified : <2016-12-24 Sat 10:31:58 GMT> sharlatan
+;;; Last Modified : <2017-1-11 Wed 21:40:23 GMT> sharlatan
 ;;; Author        : Sharlatan <sharlatanus@gmail.com>
 ;;; Maintainer(s) : Sharlatan
 ;;; Commentary:
@@ -8,6 +8,17 @@
 ;;; Combined with Purcell "A reasonable Emacs config" https://github.com/purcell/emacs.d
 ;;;
 ;;; Code:
+
+(defvar exzellenz/required-packages '(evil
+                                      org-beautify-theme
+                                      org-bullets
+                                      ggtags
+                                      yasnippet
+                                      multi-term
+                                      dockerfile-mode)
+  "Required prive packages for exzellenz set up.")
+(dolist (pkg exzellenz/required-packages)
+  (require-package pkg))
 
 ;;; Time stemtp in the header when save the file
 ;; <Yar-month-day weekday Time Zone> username
@@ -16,16 +27,15 @@
       "8/Last Modified[ \t]*:\\\\?[ \t]*<%04Y-%:m-%02d %03a %02H:%02M:%02S %Z> %u\\\\?$" )
 
 (add-hook 'before-save-hook 'time-stamp)
+
+
 
 ;;; Evil-mode
 (setq evil-toggle-key "C-'")
-(require-package 'evil)
 
 ;;; Org-mode
 ;;
 ;; http://ehneilsen.net/notebook/orgExamples/org-examples.html
-(require-package 'org-beautify-theme)
-(require-package 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 (setq org-src-fontify-natively t)
@@ -36,7 +46,6 @@
 
 ;;; GNU Global
 ;; https://github.com/leoliu/ggtags
-(require-package 'ggtags)
 (add-hook 'c-mode-common-hook
           (lambda ()
             (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
@@ -45,7 +54,6 @@
 
 ;;;Yas-snipets
 ;; http://joaotavora.github.io/yasnippet/
-(require-package 'yasnippet)
 (yas-global-mode 1)
 ;; Default snippet path
 (setq yas-snippet-dirs (file-expand-wildcards "~/.emacs.d/elpa/yasnippet*/snippets"))
@@ -67,7 +75,6 @@
 ;;; multi-term
 ;; https://www.emacswiki.org/emacs/download/multi-term.el
 
-(require-package 'multi-term)
 (add-hook 'term-mode-hook
           (lambda ()
             (yas-minor-mode -1)
@@ -77,6 +84,9 @@
             (add-to-list 'term-bind-key-alist '("C-c C-k" . term-char-mode))
             ))
 (global-set-key (kbd "C-c T") 'multi-term)
+
+;;; Docker
+;;
 
 
 ;;; Custom functios
