@@ -1,6 +1,6 @@
 ;;; init-local.el -- Custom local variables and functios.
 ;;; Created       : Thu 11 Aug 2016 22:32:01
-;;; Last Modified : <2017-1-11 Wed 21:40:23 GMT> sharlatan
+;;; Modified      : <2017-1-31 Tue 20:56:18 GMT> sharlatan
 ;;; Author        : Sharlatan <sharlatanus@gmail.com>
 ;;; Maintainer(s) : Sharlatan
 ;;; Commentary:
@@ -16,18 +16,18 @@
                                       yasnippet
                                       multi-term
                                       dockerfile-mode)
-  "Required prive packages for exzellenz set up.")
+  "Required custom packages for exzellenz set up.")
 (dolist (pkg exzellenz/required-packages)
   (require-package pkg))
+
 
 ;;; Time stemtp in the header when save the file
 ;; <Yar-month-day weekday Time Zone> username
 ;; TODO: how to insert WEEK number?
 (setq time-stamp-pattern
-      "8/Last Modified[ \t]*:\\\\?[ \t]*<%04Y-%:m-%02d %03a %02H:%02M:%02S %Z> %u\\\\?$" )
+      "8/Modified[ \t]*:\\\\?[ \t]*<%04Y-%:m-%02d %03a %02H:%02M:%02S %Z> %u\\\\?$" )
 
 (add-hook 'before-save-hook 'time-stamp)
-
 
 
 ;;; Evil-mode
@@ -131,7 +131,7 @@
     (progn
       (org-cut-special)
       (goto-char (point-min))
-      (if (search-forward "* DONE" nil 't)
+      (if (search-forward "* COMPLETED" nil 't)
           (progn
             (beginning-of-line)
             (org-yank))
