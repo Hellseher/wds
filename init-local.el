@@ -1,6 +1,6 @@
 ;;; init-local.el -- Custom local variables and functios.
 ;;; Created       : Thu 11 Aug 2016 22:32:01
-;;; Modified      : <2017-1-31 Tue 20:56:18 GMT> sharlatan
+;;; Modified      : <2017-3-06 Mon 21:15:19 GMT> sharlatan
 ;;; Author        : Sharlatan <sharlatanus@gmail.com>
 ;;; Maintainer(s) : Sharlatan
 ;;; Commentary:
@@ -39,6 +39,44 @@
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 (setq org-src-fontify-natively t)
+
+
+;; Lots of stuff from http://doc.norang.ca/org-mode.html
+
+
+(after-load 'org
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   `((plantuml . t))))
+
+(setq org-plantuml-jar-path
+      (expand-file-name "~/.emacs.d/plantuml.jar"))
+
+(defun exzellenz/grab-plantuml (url jar-name)
+  "Download URL and extract JAR-NAME as `org-plantuml-jar-path'."
+  ;; TODO: handle errors
+  (message "Grabbing " jar-name " for org.")
+  (let ((zip-temp (make-temp-name "emacs-plantuml")))
+    (unwind-protect
+        (progn
+          (when (executable-find "unzip")
+            (url-copy-file url zip-temp)
+            (shell-command (concat "unzip -p " (shell-quote-argument zip-temp)
+                                   " " (shell-quote-argument jar-name) " > "
+                                   (shell-quote-argument org-plantuml-jar-path)))))
+      (when (file-exists-p zip-temp)
+        (delete-file zip-temp)))))
+
+(after-load 'ob-plantuml
+  (unless (and (boundp 'org-plantuml-jar-path)
+               (file-exists-p org-plantuml-jar-path))
+    (let ((jar-name "plantuml.jar")
+          (url "http://sourceforge.net/projects/plantuml/files/plantuml-jar-gplv2-8055.zip"))
+      (setq org-plantuml-jar-path (expand-file-name jar-name (file-name-directory user-init-file)))
+      (unless (file-exists-p org-plantuml-jar-path)
+        (exzellenz/grab-plantuml url jar-name)))))
+
+
 
 ;;; flycheck
 ;; http://www.flycheck.org/en/latest/
@@ -54,11 +92,11 @@
 
 ;;;Yas-snipets
 ;; http://joaotavora.github.io/yasnippet/
+(add-hook 'yas
+          (setq yas-snippet-dirs (file-expand-wildcards "~/.emacs.d/elpa/yasnippet*/snippets"))
+          (setq yas-snippet-dirs (append yas-snippet-dirs
+                                         '("~/.emacs.d/snippets"))))
 (yas-global-mode 1)
-;; Default snippet path
-(setq yas-snippet-dirs (file-expand-wildcards "~/.emacs.d/elpa/yasnippet*/snippets"))
-(setq yas-snippet-dirs (append yas-snippet-dirs
-                               '("~/.emacs.d/snippets")))
 
 ;;; tramp
 ;; https://www.gnu.org/software/tramp/
@@ -91,6 +129,19 @@
 
 ;;; Custom functios
 ;;
+
+;; https://www.emacswiki.org/emacs/SortWords
+(defun sort-words (reverse beg end)
+  "Sort words in region alphabetically, in REVERSE if negative.
+    Prefixed with negative \\[universal-argument], sorts in reverse.
+
+    The variable `sort-fold-case' determines whether alphabetic case
+    affects the sort order.
+
+    See `sort-regexp-fields'."
+  (interactive "*P\nr")
+  (sort-regexp-fields reverse "\\w+" "\\&" beg end))
+
 (defun exzellenz/hl-insert ()
   "Insert dashed horisotnal line."
   (interactive)

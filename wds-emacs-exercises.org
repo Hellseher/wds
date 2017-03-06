@@ -1,6 +1,6 @@
 # File          : wds-emacs-execrices.el
 # Created       : Sun 24 Apr 2016 14:02:12
-# Last Modified : <2016-11-14 Mon 22:13:37 GMT> sharlatan
+# Last Modified : <2017-1-25 Wed 23:41:40 GMT> sharlatan
 # Authour       : sharlatan
 # Maintainer(s) :
 
@@ -336,13 +336,39 @@ nth - Nth element of a list
                            (search-forward (char-to-string char) nil nil arg)
                            (point))))
 #+END_SRC
-:  search-forward*
-#+BEGIN_EXAMPLE
- (search-forward "TARGET-STRING"
-                     LIMIT-OF-SEARCH
-                     WHAT-TO-DO-IF-SEARCH-FAILS
-                     REPEAT-COUNT)
-#+END_EXAMPLE
+- copy-region-as-kill :: Emacs 25.1.1
+#+BEGIN_SRC emacs-lisp
+(defun copy-region-as-kill (beg end &optional region)
+  "Save the region as if killed, but don't kill it.
+In Transient Mark mode, deactivate the mark.
+If `interprogram-cut-function' is non-nil, also save the text for a window
+system cut and paste.
+
+The copied text is filtered by `filter-buffer-substring' before it is
+saved in the kill ring, so the actual saved text might be different
+from what was in the buffer.
+
+When called from Lisp, save in the kill ring the stretch of text
+between BEG and END, unless the optional argument REGION is
+non-nil, in which case ignore BEG and END, and save the current
+region instead.
+
+This command's old key binding has been given to `kill-ring-save'."
+  ;; Pass mark first, then point, because the order matters when
+  ;; calling `kill-append'.
+  (interactive (list (mark) (point)
+                     (prefix-numeric-value current-prefix-arg)))
+  (let ((str (if region
+                 (funcall region-extract-function nil)
+               (filter-buffer-substring beg end))))
+  (if (eq last-command 'kill-region)
+        (kill-append str (< end beg))
+      (kill-new str)))
+  (setq deactivate-mark t)
+  nil)
+#+END_SRC
+- copy-region-as-kill
+- this-command ::
 *** 8.8 Ex
 
 * Glosary
@@ -362,6 +388,7 @@ nth - Nth element of a list
 - interpreter
 - kill (clip) :: kill text out of a buffer and put it into storage from which it
                  can be brought back.
+- kill ring :: a list that hold the pieces of text.
 - list
 - macros
 - mark
@@ -373,7 +400,25 @@ nth - Nth element of a list
                of false.  in Lisp's usualy marks as last part of the symbol
                "...p", "...-p"
 - primitive function :: basic function in Emacs environment written in C.
+- quasiquoting :: allowsus to create chunks of data that have small pieces of
+                  Lisp code embedded in them. To enable quasiquoting, you must
+                  use a backquote [ ` ] not a single quote [ ' ] when switching
+                  from code to data mode. Both the single quote and backquote in
+                  Lisp “flip” a piece of code into data mode, but only a
+                  backquote can also be unquoted using the comma character, to
+                  flip back into code mode.
+  #+BEGIN_SRC lisp
+  (defun describe-path (edge)
+  `(there is a ,(caddr edge) going ,(cadr edge) from here.))
+
+  > (describe-path '(garden west door))
+  (THERE IS A DOOR GOING WEST FROM HERE.)
+  #+END_SRC
 - region :: space betwin point and mark
+- higher-order function :: a function which takes another function as arguments.
+  #+BEGIN_EXAMPLE
+  (mapcar FUNCTION LIST)
+  #+END_EXAMPLE
 - special form ::
 - string :: string of characters "some thing like that", string is atom
 - symbol :: can have both a fun. def. and a value attached to it at the same time
@@ -383,6 +428,5 @@ nth - Nth element of a list
   - sexp
 - value
 - variable :: a symbol that has a valueE
-- kill ring :: a list that hold the pieces of text.
 * Referances
 - https://github.com/RenWenshan/emacs-lisp-intro-solutions

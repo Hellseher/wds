@@ -1,6 +1,6 @@
 # File          : README.org
 # Created       : [2016-09-10 Sat 20:45]
-# Last Modified : Sat 24 Sep 2016 23:19:45 sharlatan
+# Last Modified : Sat 24 Sep 2016 23:38:55 sharlatan
 # Author        : Hellseher <sharlatanus@gmail.com>
 # Maintainer(s) :
 # Short :
@@ -13,6 +13,7 @@ In everything I seek to grasp
 The fundamental:
 The daily choice, the daily task,
 The sentimental.
+-- Boris Pasternak
 #+END_QUOTE
 
 

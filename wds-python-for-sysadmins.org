@@ -1,12 +1,12 @@
 # File          : wds-python-for-sysamin.org
 # Created       : Tue 11 Oct 2016 23:24:38
-# Last Modified : <2016-11-12 Sat 00:34:09 GMT> sharlatan
+# Last Modified : <2016-12-29 Thu 20:44:30 GMT> sharlatan
 # Author        : sharlatan <sharlatanus@gmail.com>
 # Maintainer(s  : sharlatan
 # Short         : Comparison Python with shell scripting.
 
 #+TITLE: Python for Sysadmins
-** Intro
+* Intro
 /Main modules and templates  useful for system programming./
 
 On most Linux distributions (Debian, Ubunty, RHL, Fedora, CentOs, etc...) the
@@ -16,8 +16,8 @@ See offisial documenataion for [[https://docs.python.org/3/installing/][Installi
 #+BEGIN_EXAMPLE
     $: pip install BeutifullSoup
 #+END_EXAMPLE
-*** Modules
-**** Build-in Modules
+** Modules
+*** Build-in Modules
 https://docs.python.org/3/py-modindex.html
 
 - argparse :: module makes it easy to write user-friendly command-line
@@ -37,7 +37,7 @@ https://docs.python.org/3/py-modindex.html
 - tarfile :: module makes it possible to read and write tar archives, including
              those using gzip, bz2 and lzma compression.
 
-**** External Modules
+*** External Modules
 - [[https://www.crummy.com/software/BeautifulSoup/][BeutifullSoup]] :: HTML scraping.
 - [[http://www.fabfile.org/][Fabric]] :: library and command-line tool for streamlining the use of SSH for
             application deployment or systems administration tasks.
@@ -52,7 +52,7 @@ https://docs.python.org/3/py-modindex.html
            able to forge or decode packets of a wide number of protocols.
 - [[http://docopt.org/][Docopt]] :: Command-line interface description language. Available not just for Python.
 
-*** General Templates
+** General Templates
 
 /Main template of script file/
 #+BEGIN_SRC python
@@ -179,9 +179,9 @@ user on *nix systems.
   # end of script
 #+END_SRC
 
-** Common Packages Comparison
-*** Linux
-**** gnu-core-utils [[https://www.gnu.org/software/coreutils/manual/coreutils.html][*]]
+* Common Packages Comparison
+** Linux
+*** gnu-core-utils [[https://www.gnu.org/software/coreutils/manual/coreutils.html][*]]
 
 | cmd           | Description                                                               | Python          | in     | out    | Example |
 |---------------+---------------------------------------------------------------------------+-----------------+--------+--------+---------|
@@ -289,8 +289,8 @@ user on *nix systems.
 | sha256sum (1) | compute and check SHA256 message digest                                   | hashlib         | module | module |         |
 | sha384sum (1) | compute and check SHA384 message digest                                   |                 |        |        |         |
 | sha512sum (1) | compute and check SHA512 message digest                                   | hashlib         | module | module |         |
-***** Examples: gnu-core-utiles
-**** gnu-bash
+**** Examples: gnu-core-utiles
+*** gnu-bash
 
 
 | cmd       | Description                                                        | Python        | in          | out  | Example |
@@ -371,21 +371,21 @@ user on *nix systems.
 | variables | Common shell variable names and usage.                             |               |             |      |         |
 |           |                                                                    |               |             |      |         |
 
-**** utils-linux
-** References
-*** Books
+*** utils-linux
+* References
+** Books
 + Noah Gift and Jeremy M. Jones
   *Python for Unix and Linux System Administration*
   O'Reilly 2008
-*** Links
+** Links
 + Python documentation https://docs.python.org/
 + IPython Interactive Computing https://www.ipython.org
 + Code Like a Pythonista: Idiomatic Python http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html#module-structure
 + Sockets programming in Python https://www.ibm.com/developerworks/linux/tutorials/l-pysocks/
 + Google Python Style Guide https://google.github.io/styleguide/pyguide.html
 + Dive Into Python 3 http://www.diveintopython3.net/index.html
-*** Hubs
+** Hubs
 + https://github.com/pcsforeducation/Sysadmin-scripts
 + https://github.com/vinta/awesome-python
-*** IRCs
+** IRCs
 + #python-unregistered was created on 2011-02-06 00:12:29
