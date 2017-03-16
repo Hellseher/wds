@@ -1,6 +1,6 @@
 ;;; init-local.el -- Custom local variables and functios.
 ;;; Created       : Thu 11 Aug 2016 22:32:01
-;;; Modified      : <2017-3-06 Mon 21:15:19 GMT> sharlatan
+;;; Modified      : <2017-3-16 Thu 01:45:58 GMT> sharlatan
 ;;; Author        : Sharlatan <sharlatanus@gmail.com>
 ;;; Maintainer(s) : Sharlatan
 ;;; Commentary:
@@ -12,6 +12,7 @@
 (defvar exzellenz/required-packages '(evil
                                       org-beautify-theme
                                       org-bullets
+                                      org-gcal
                                       ggtags
                                       yasnippet
                                       multi-term
