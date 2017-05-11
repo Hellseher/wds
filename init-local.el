@@ -1,6 +1,6 @@
 ;;; init-local.el -- Custom local variables and functios.
 ;;; Created       : Thu 11 Aug 2016 22:32:01
-;;; Modified      : <2017-3-16 Thu 01:45:58 GMT> sharlatan
+;;; Modified      : <2017-5-11 Thu 22:20:24 BST> sharlatan
 ;;; Author        : Sharlatan <sharlatanus@gmail.com>
 ;;; Maintainer(s) : Sharlatan
 ;;; Commentary:
@@ -12,7 +12,6 @@
 (defvar exzellenz/required-packages '(evil
                                       org-beautify-theme
                                       org-bullets
-                                      org-gcal
                                       ggtags
                                       yasnippet
                                       multi-term
@@ -41,41 +40,39 @@
 
 (setq org-src-fontify-natively t)
 
-
 ;; Lots of stuff from http://doc.norang.ca/org-mode.html
 
+;; (after-load 'org
+;;   (org-babel-do-load-languages
+;;    'org-babel-load-languages
+;;    `((plantuml . t))))
 
-(after-load 'org
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   `((plantuml . t))))
+;; (setq org-plantuml-jar-path
+;;       (expand-file-name "~/.emacs.d/plantuml.jar"))
 
-(setq org-plantuml-jar-path
-      (expand-file-name "~/.emacs.d/plantuml.jar"))
+;; (defun exzellenz/grab-plantuml (url jar-name)
+;;   "Download URL and extract JAR-NAME as `org-plantuml-jar-path'."
+;;   ;; TODO: handle errors
+;;   (message "Grabbing " jar-name " for org.")
+;;   (let ((zip-temp (make-temp-name "emacs-plantuml")))
+;;     (unwind-protect
+;;         (progn
+;;           (when (executable-find "unzip")
+;;             (url-copy-file url zip-temp)
+;;             (shell-command (concat "unzip -p " (shell-quote-argument zip-temp)
+;;                                    " " (shell-quote-argument jar-name) " > "
+;;                                    (shell-quote-argument org-plantuml-jar-path)))))
+;;       (when (file-exists-p zip-temp)
+;;         (delete-file zip-temp)))))
 
-(defun exzellenz/grab-plantuml (url jar-name)
-  "Download URL and extract JAR-NAME as `org-plantuml-jar-path'."
-  ;; TODO: handle errors
-  (message "Grabbing " jar-name " for org.")
-  (let ((zip-temp (make-temp-name "emacs-plantuml")))
-    (unwind-protect
-        (progn
-          (when (executable-find "unzip")
-            (url-copy-file url zip-temp)
-            (shell-command (concat "unzip -p " (shell-quote-argument zip-temp)
-                                   " " (shell-quote-argument jar-name) " > "
-                                   (shell-quote-argument org-plantuml-jar-path)))))
-      (when (file-exists-p zip-temp)
-        (delete-file zip-temp)))))
-
-(after-load 'ob-plantuml
-  (unless (and (boundp 'org-plantuml-jar-path)
-               (file-exists-p org-plantuml-jar-path))
-    (let ((jar-name "plantuml.jar")
-          (url "http://sourceforge.net/projects/plantuml/files/plantuml-jar-gplv2-8055.zip"))
-      (setq org-plantuml-jar-path (expand-file-name jar-name (file-name-directory user-init-file)))
-      (unless (file-exists-p org-plantuml-jar-path)
-        (exzellenz/grab-plantuml url jar-name)))))
+;; (after-load 'ob-plantuml
+;;   (unless (and (boundp 'org-plantuml-jar-path)
+;;                (file-exists-p org-plantuml-jar-path))
+;;     (let ((jar-name "plantuml.jar")
+;;           (url "http://sourceforge.net/projects/plantuml/files/plantuml-jar-gplv2-8055.zip"))
+;;       (setq org-plantuml-jar-path (expand-file-name jar-name (file-name-directory user-init-file)))
+;;       (unless (file-exists-p org-plantuml-jar-path)
+;;         (exzellenz/grab-plantuml url jar-name)))))
 
 
 
@@ -194,6 +191,14 @@
 
 (after-load 'org
   (define-key org-mode-map (kbd "C-c C-x t") 'exzellenz/org-todo-move-to-top))
+
+
+;;; Fixes
+
+;; 2015-07-04 bug of pasting in emacs.
+;; http://debbugs.gnu.org/cgi/bugreport.cgi?bug=16737#17
+;; http://ergoemacs.org/misc/emacs_bug_cant_paste_2015.html
+(setq x-selection-timeout 300)
 
 (provide 'init-local)
 ;;; init-local.el ends here
