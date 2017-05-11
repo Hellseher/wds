@@ -1,9 +1,9 @@
-# File          : wds-python-for-sysamin.org
-# Created       : Tue 11 Oct 2016 23:24:38
-# Last Modified : <2016-12-29 Thu 20:44:30 GMT> sharlatan
-# Author        : sharlatan <sharlatanus@gmail.com>
-# Maintainer(s  : sharlatan
-# Short         : Comparison Python with shell scripting.
+# File         : wds-python-for-sysamin.org
+# Created      : Tue 11 Oct 2016 23:24:38
+# Modified     : <2017-4-22 Sat 21:38:53 BST> sharlatan
+# Author       : sharlatan <sharlatanus@gmail.com>
+# Maintainer(s : sharlatan
+# Short        : Comparison Python with shell scripting.
 
 #+TITLE: Python for Sysadmins
 * Intro
@@ -23,6 +23,8 @@ https://docs.python.org/3/py-modindex.html
 - argparse :: module makes it easy to write user-friendly command-line
               interfaces.
 - glob :: Unix style pathname pattern expansion
+- ipaddress :: /New in version 3.3./ provides the capabilities to create, manipulate and operate on
+               IPv4 and IPv6 addresses and networks.
 - os ::	Miscellaneous operating system interfaces.
 - os.path :: Operations on pathnames.
 - platform :: Retrieves as much platform identifying data as possible.
@@ -179,6 +181,18 @@ user on *nix systems.
   # end of script
 #+END_SRC
 
+* Coocbook
+** Networking
+#+BEGIN_SRC python
+  #!/usr/bin/env python3
+
+  import ipaddress as IP
+  import sys
+
+  sw_x4_net = sys.argv[2]
+
+  print(sw_x4_net)
+#+END_SRC
 * Common Packages Comparison
 ** Linux
 *** gnu-core-utils [[https://www.gnu.org/software/coreutils/manual/coreutils.html][*]]
