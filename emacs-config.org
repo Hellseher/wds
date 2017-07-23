@@ -10,7 +10,11 @@
 #+TITLE: WDS: Emacs Configuration
 
 #+BEGIN_QUOTE
-
+In everything I seek to grasp
+The fundamental:
+The daily choice, the daily task,
+The sentimental.
+                                 --Boris Pasternak
 #+END_QUOTE
 
 * Prologue
