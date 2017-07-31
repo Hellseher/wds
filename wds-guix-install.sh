@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # File     : wds-guix-install.sh
 # Created  : <2017-07-23 Sun 00:40:54 BST>
-# Modified : <2017-7-24 Mon 01:00:10 BST> sharlatan
+# Modified : <2017-7-31 Mon 23:50:05 BST> sharlatan
 # Author   : sharlatan
 # Synopsis :
 
@@ -16,17 +16,41 @@ set -e
 #+CHANGELOG
 # 0.0.1 :: <2017-07-23 Sun 00:40:54 BST>
 #       + Script initiation.
-#
+# 0.0.2 ::
+#       + add new functions: chk_sys_arch, welcome
 # ==============================================================================
 # ------------------------------------------------------------------------------
 #+DEFAUL_CONFIG
 
 CMD_VER=0.0.1
 CMDNAME=wds-guix-install.sh
-REQUIRE=(dirname readlink wget gpg curl sed sort getent)
+REQUIRE=(
+    "dirname"
+    "readlink"
+    "wget"
+    "gpg"
+    "curl"
+    "which"
+    "sed"
+    "sort"
+    "getent"
+    "mktemp"
+    "rm"
+    "chmod"
+    "uname"
+    "groupadd"
+    "tr"
+)
 
-OK=$'[  \033[32;1mOK\033[0m  ]'
-FAIL=$'[ \033[31;1mFAIL\033[0m ]'
+# Conditional symafors
+PAS=$'[ \033[32;1mPAS\033[0m ] '
+ERR=$'[ \033[31;1mERR\033[0m ] '
+INF="[ INF ] "
+
+FTP_URL="ftp://alpha.gnu.org/gnu/guix/"
+
+# ------------------------------------------------------------------------------
+#+UTILITIES_FUNCTIONS
 
 _err()
 { # All errors go to stder.
@@ -45,104 +69,175 @@ chk_require()
 
     cmds=(${1})
 
-    _msg "--- [$FUNCNAME] ---"
+    _msg "--- [ $FUNCNAME ] ---"
     [ "${#cmds}" -eq "0" ] &&
-        { _err "${FAIL} No arguments provided."; return 1; }
+        { _err "${ERR}No arguments provided."; return 1; }
 
     for c in ${cmds[@]}; do
-        command -v "$c" 2>&1 >/dev/null
+        command -v "$c" &>/dev/null
         [ "$?" -eq "1" ] &&
             warn+=("$c")
     done
 
     [ "${#warn}" -ne 0 ] &&
-        { _err "${FAIL} Commands ${warn[*]} are not avialable, install them first.";
+        { _err "${ERR}Commands ${warn[*]} are not avialable, install them.";
           return 1; }
 
-    _msg "${OK} verification of required commands completed"
+    _msg "${PAS}verification of required commands completed"
+}
+
+chk_term()
+{ # Check for ANSI terminal for color printing.
+    local ansi_term
+
+    if [ -t 2 ]; then
+        if [ "${TERM+set}" = 'set' ]; then
+            case "$TERM" in
+                xterm*|rxvt*|urxvt*|linux*|vt*|eterm*)
+                    ansi_term=true
+                    ;;
+                *)
+                    ansi_term=false
+                    ERR="[ ERR ]"
+                    PAS="[ PAS ]"
+                    ;;
+            esac
+        fi
+    fi
 }
 
 chk_init_sys()
 { # Return init system type name.
     if [[ $(/sbin/init --version 2>/dev/null) =~ upstart ]]; then
-        _msg "init system is: upstart"
+        _msg "${INF}init system is: upstart"
         INIT_SYS="upstart"
         return 0
     elif [[ $(systemctl) =~ -\.mount ]]; then
-        _msg "init system is: systemd"
+        _msg "${INF}init system is: systemd"
         INIT_SYS="systemd"
         return 0
     elif [[ -f /etc/init.d/cron && ! -h /etc/init.d/cron ]]; then
-        _msg "init system is: sysv-init"
+        _msg "${INF}init system is: sysv-init"
         INIT_SYS="sysv-init"
         return 0
     else
-        _msg "init system is: NA"
+        _msg "${INF}init system is: NA"
         INIT_SYS="NA"
-        _err "Init system could not be detected."
+        _err "${ERR}Init system could not be detected."
     fi
 }
 
-# ------------------------------------------------------------------------------
-#+GLOBAL_VARIABLES
+chk_sys_arch()
+{ # Check for Operating system and CPU architecture type.
+    local os
+    local arch
 
-FTP_URL="ftp://alpha.gnu.org/gnu/guix"
+    os="$(uname -s)"
+    arch="$(uname -m)"
+
+    # GUIX v0.13.0 avialable for OS Linux only as on <Sun 30 Jul 00:23:57 BST 2017>
+    # https://www.gnu.org/software/guix/manual/html_node/GNU-Distribution.html
+    # https://www.gnu.org/software/guix/manual/html_node/Porting.html#Porting
+
+    case "$arch" in
+        i386 | i486 | i686 | i786 | x86)
+            local arch=i686
+            ;;
+        x86_64 | x86-64 | x64 | amd64)
+            local arch=x86_64
+            ;;
+        *)
+            _err "${ERR}Unsupported CPU type: ${arch}"
+            exit 1
+    esac
+
+    case "$os" in
+        Linux | linux)
+            local os=linux
+            ;;
+        *)
+            _err "${ERR}Your Operation system is unsuported yet."
+    esac
+
+    ARCH_OS="${arch}-${os}"
+}
 
 # ------------------------------------------------------------------------------
 #+MAIN
 
-get_guix_binary_list()
-{ # Scan for ftp://alpha.gnu.org/gnu/guix/ and save list of binaries
+guix_get_bin_list()
+{ # Scan project FTP and save list of binaries
+    local ftp_url="$1"
     local -a bin_ver_ls
+    local latest_ver
+    local default_ver
 
-    _msg "--- [$FUNCNAME] ---"
+    _msg "--- [ $FUNCNAME ] ---"
 
-    bin_ver_ls=("$(curl -s ftp://alpha.gnu.org/gnu/guix/ \
+    # Filter only version and architecture
+    bin_ver_ls=("$(curl -s "$ftp_url" \
         | sed -n 's/.*\(guix-binary.*xz$\)/\1/p' \
         | sed -n 's/.*\(-[0-9].*-\)/\1/p' \
         | sed 's/^-\|\.tar\.xz//g')")
 
+    latest_ver="$(echo "$bin_ver_ls" \
+                       | grep -oP "([0-9]{1,2}\.){2}[0-9]{1,2}" \
+                       | sort -Vu \
+                       | tail -n1)"
+
+    default_ver="guix-binary-${latest_ver}.${ARCH_OS}"
+
     if [[ "${#bin_ver_ls}" -ne "0" ]]; then
-        _msg "${OK} Guix binary releases list recived."
+        _msg "${PAS}Guix binary releases list recived."
+        _msg "${INF}recomended for your system: ${default_ver}"
     else
-        _err "${FAIL} Could not get Guix binary releases list."
+        _err "${ERR}Could not get Guix binary releases list."
         exit 1
     fi
 
-    for line in ${bin_ver_ls[@]}; do
-        _msg "         $line"
-    done | sort -h
+    # for line in ${bin_ver_ls[@]}; do
+    #     _msg "${INF}$line"
+    # done | sort -h
 
-    # TODO (Oleg-170723030421): set BIN_VER to latest default
-    while true; do
-        _msg "which to install? "
-        read -r BIN_VER
+    # while true; do
+    #     _msg "which to install? (${default_ver})"
+    #     read -r BIN_VER
+    #     if [[ -z "$BIN_VER" ]]; then
+    #         BIN_VER="$default_ver"
+    #         _msg "${PAS}default has been chousen: ${default_ver}"
+    #         break
+    #     elif [[ " ${bin_ver_ls=[*]} " == *"$bin_name"* ]]; then
+    #         _msg "${PAS}your choise: $BIN_VER"
+    #         break
+    #     else
+    #         _err "${ERR} Not right one, try again or exit C-c:"
+    #     fi
+    #     done
 
-        if [[ " ${bin_ver_ls=[*]} " == *"$bin_name"* ]]; then
-            _msg "your choise: $BIN_VER"
-            break
-        else
-            _err "${FAIL} Not right one, try again on exit C-c:"
-        fi
-    done
+    # Use default to download acroding to the curled list and local ARCH-OS.
+    BIN_VER="$default_ver"
 }
 
-wget_and_gpg()
+guix_get_bin()
 { # Download and verify binary package.
     local url="$1"
     local bin_ver="$2"
+    local dl_path="$3"
 
-    _msg "--- [$FUNCNAME] ---"
+    _msg "--- [ $FUNCNAME ] ---"
 
-    _msg "trying to download"
+    _msg "${INF}trying to download"
 
-    wget -q "${url}/guix-binary-${bin_ver}.tar.xz" 2>&1 >/dev/null
-    wget -q "${url}/guix-binary-${bin_ver}.tar.xz.sig" 2>&1 >/dev/null
+#    rm "${dl_path}/*" &&
+        _msg "${INF}flush ${dl_path}"
+
+    wget -q -P "$dl_path" "${url}/${bin_ver}.tar.xz" &>/dev/null
+    wget -q -P "$dl_path" "${url}/${bin_ver}.tar.xz.sig" &>/dev/null
 
     if [[ "$?" -eq 0 ]]; then
-       _msg "${OK} download completed."
+       _msg "${PAS}download completed."
     else
-        _err "${FAIL} could not download."
+        _err "${ERR}could not download."
         exit 1
     fi
 
@@ -151,9 +246,9 @@ wget_and_gpg()
 
     #gpg --verify "guix-binary-${bin_ver}.tar.xz.sig"
     # if [[ "$?" -eq 0 ]]; then
-    #    _msg "${OK} verification completed."
+    #    _msg "${PAS} verification completed."
     # else
-    #     _err "${FAIL} could not verify."
+    #     _err "${ERR} could not verify."
     #     exit 1
     # fi
 }
@@ -161,30 +256,32 @@ wget_and_gpg()
 sys_creat_store()
 { # Untar and move files to creat a Guix store.
     local pkg="$1"
+    local tmp_path="$2"
 
-    _msg "--- [$FUNCNAME] ---"
+    _msg "--- [ $FUNCNAME ] ---"
 
     # TODO (Oleg-170723030815): Add wornings if store exists.
-    _msg "unpacking archive to /var and /gnu"
+    cd "$tmp_path"
     tar --warning=no-timestamp \
-        -C /tmp \
-        -xf "$pkg"
+        --extract \
+        --file "$pkg" &&
+    _msg "${PAS}unpacked archive"
+
     # TODO (Oleg-170724000543): really want to remove existing guix dir?
-    if [[ -e "/var/guix" && -e "/gnu" ]]; then
-        _msg "remove old files"
-         rm -r /var/guix &&
-             mv /tmp/var/guix /var
-         rm -r /gnu &&
-             mv /tmp/gnu /
+    # TODO (Oleg-170731193624): hashcheck and copy only not presented?
+    if [[ -e "/var/guix" || -e "/gnu" ]]; then
+        _msg "${INF}Guix was previosly installed, updating files."
+        cp -R "${tmp_path}/var" /var/
+        cp -R "${tmp_path}/gnu" /
     else
-        _msg "fresh install"
-         mv /tmp/var/guix /var &&
-             mv /tmp/gnu /
+        _msg "${INF}Guix is installing for the first time, create structrue"
+        mv "${tmp_path}/var/guix" /var/
+        mv "${tmp_path}/gnu" /
     fi
 
-    _msg "link profile to /root/.guix-profile"
     ln -sf /var/guix/profiles/per-user/root/guix-profile \
-         ~root/.guix-profile
+         ~root/.guix-profile &&
+    _msg "${PAS}main profile linked to /root/.guix-profile"
 
      GUIX_PROFILE="${HOME}/.guix-profile"
      source "${GUIX_PROFILE}/etc/profile"
@@ -193,28 +290,28 @@ sys_creat_store()
 sys_creat_build_usr()
 { # Create the group and user accounts for build users.
 
-    _msg "--- [$FUNCNAME] ---"
+    _msg "--- [ $FUNCNAME ] ---"
 
     if [ $(getent group guixbuild) ]; then
-        _msg "goup guixbuild exists"
+        _msg "${INF}goup guixbuild exists"
     else
-        _msg "group guixbuild does not exist."
         groupadd --system guixbuild
+        _msg "${PAS}group <guixbuild> created"
     fi
 
     for i in $(seq -w 1 10); do
         if id "guixbuilder${i}" &>/dev/null; then
-            _msg "user is already in the system, reset"
+            _msg "${INF}user is already in the system, reset"
             usermod -g guixbuild -G guixbuild           \
                     -d /var/empty -s "$(which nologin)" \
                     -c "Guix build user $i"             \
                     "guixbuilder${i}";
         else
-            _msg "fresh install guixbuilder${i}"
             useradd -g guixbuild -G guixbuild           \
                     -d /var/empty -s "$(which nologin)" \
                     -c "Guix build user $i" --system    \
                     "guixbuilder${i}";
+            _msg "${PAS}user added <guixbuilder${i}>"
         fi
     done
 }
@@ -226,7 +323,7 @@ sys_guixd_enable()
     local local_bin
     local var_guix
 
-    _msg "--- [$FUNCNAME] ---"
+    _msg "--- [ $FUNCNAME ] ---"
 
     info_path="/usr/local/share/info"
     local_bin="/usr/local/bin"
@@ -241,23 +338,21 @@ sys_guixd_enable()
              start guix-daemon
              ;;
         systemd)
-            _msg "enable Guix deamon on Systemd"
-            cp ~root/.guix-profile/lib/systemd/system/guix-daemon.service \
-               /etc/systemd/system/
-
-            chmod 664 /etc/systemd/guix-daemon.service
-
+            { cp ~root/.guix-profile/lib/systemd/system/guix-daemon.service \
+               /etc/systemd/system/;
+            chmod 664 /etc/systemd/system/guix-daemon.service;
             systemctl daemon-reload &&
                 systemctl start guix-daemon &&
-                systemctl enable guix-daemon
+                systemctl enable guix-daemon; } &&
+                _msg "${PAS}enabled Guix deamon on Systemd"
             ;;
         NA|*)
-            _msg "could no ditect init system, enable manually"
+            _msg "${ERR}could no ditect init system, enable manually"
             echo "~root/.guix-profile/bin/guix-daemon --build-users-group=guixbuild"
             ;;
     esac
 
-    _msg "make the guix command available to other users on the machine"
+    _msg "${INF}make the guix command available to other users on the machine"
 
      [ -e "$local_bin" ] || mkdir -p "$local_bin"
      ln -sf "${var_guix}/bin/guix"  "$local_bin"
@@ -274,23 +369,54 @@ sys_hydra_enable()
     # https://www.gnu.org/software/guix/manual/guix.html#Substitutes
 }
 
+welcome()
+{
+ cat << "EOF"
+   _____ _   _ _    _    _____       _       _____ _____
+  / ____| \ | | |  | |  / ____|     (_)     / ____|  __ \
+ | |  __|  \| | |  | | | |  __ _   _ ___  _| (___ | |  | |
+ | | |_ | . ` | |  | | | | |_ | | | | \ \/ /\___ \| |  | |
+ | |__| | |\  | |__| | | |__| | |_| | |>  < ____) | |__| |
+  \_____|_| \_|\____/   \_____|\__,_|_/_/\_\_____/|_____/
+
+This set up install GNU GuixSD on your system
+
+(c) https://www.gnu.org/software/guix/
+EOF
+ echo "Procide?..."
+ read -r  ANSWER
+}
+
 main()
 {
-    printf "Start %s %sv at %s\n\n" "$CMDNAME" "$CMD_VER" "$(date)"
+    local abs_path
+    local tmp_path
+    welcome
+
+    printf "Start %s v%s at %s\n\n" "$CMDNAME" "$CMD_VER" "$(date)"
+
+    chk_term
     chk_require "${REQUIRE[*]}"
     chk_init_sys
+    chk_sys_arch
 
-    ABS_PATH="$(dirname "$(readlink -f "$0")")"
+    _msg "${INF}system is ${ARCH_OS}"
 
-    get_guix_binary_list
-    wget_and_gpg "$FTP_URL" "$BIN_VER"
+    abs_path="$(dirname "$(readlink -f "$0")")"
+    tmp_path="$(mktemp -t -d guix.XXX)"
 
-    sys_creat_store "guix-binary-${BIN_VER}.tar.xz"
+    guix_get_bin_list "${FTP_URL}"
+    guix_get_bin "${FTP_URL}" "${BIN_VER}" "$tmp_path"
+
+    sys_creat_store "${BIN_VER}.tar.xz" "${tmp_path}"
     sys_creat_build_usr
     sys_guixd_enable
 
     # And test install :)
     guix package -i hello
+
+    rm -r "${tmp_path}" &&
+        _msg "${INF}clean up ${tmp_path}"
  }
 
 main "$@"
