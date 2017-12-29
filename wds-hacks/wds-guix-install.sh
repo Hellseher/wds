@@ -81,7 +81,7 @@ chk_require()
     done
 
     [ "${#warn}" -ne 0 ] &&
-        { _err "${ERR}Commands ${warn[*]} are not avialable, install them.";
+        { _err "${ERR}Commands ${warn[*]} are not available, install them.";
           return 1; }
 
     _msg "${PAS}verification of required commands completed"
@@ -189,8 +189,8 @@ guix_get_bin_list()
     default_ver="guix-binary-${latest_ver}.${ARCH_OS}"
 
     if [[ "${#bin_ver_ls}" -ne "0" ]]; then
-        _msg "${PAS}Guix binary releases list recived."
-        _msg "${INF}recomended for your system: ${default_ver}"
+        _msg "${PAS}Guix binary releases list received."
+        _msg "${INF}recommended for your system: ${default_ver}"
     else
         _err "${ERR}Could not get Guix binary releases list."
         exit 1
@@ -275,7 +275,7 @@ sys_creat_store()
         cp -R "${tmp_path}/var" /var/
         cp -R "${tmp_path}/gnu" /
     else
-        _msg "${INF}Guix is installing for the first time, create structrue"
+        _msg "${INF}Guix is installing for the first time, create structure"
         mv "${tmp_path}/var/guix" /var/
         mv "${tmp_path}/gnu" /
     fi
@@ -348,7 +348,7 @@ sys_guixd_enable()
                 _msg "${PAS}enabled Guix deamon on Systemd"
             ;;
         NA|*)
-            _msg "${ERR}could no ditect init system, enable manually"
+            _msg "${ERR}could no detect init system, enable manually"
             echo "~root/.guix-profile/bin/guix-daemon --build-users-group=guixbuild"
             ;;
     esac
@@ -384,7 +384,7 @@ This set up install GNU Guix on your system
 
 (c) https://www.gnu.org/software/guix/
 EOF
- echo "Procide?..."
+ echo "Procede?..."
  read -r  ANSWER
 }
 
