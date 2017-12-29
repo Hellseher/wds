@@ -1,6 +1,6 @@
 # File         : wds-python-for-sysamin.org
 # Created      : Tue 11 Oct 2016 23:24:38
-# Modified     : <2017-4-22 Sat 21:38:53 BST> sharlatan
+# Modified     : <2017-12-29 Fri 23:26:57 GMT> Sharlatan
 # Author       : sharlatan <sharlatanus@gmail.com>
 # Maintainer(s : sharlatan
 # Short        : Comparison Python with shell scripting.
@@ -96,6 +96,34 @@ required version. Better run it before all main modules will be loaded.
   # ...
   # end of the script
 
+#+END_SRC
+/Check for file/path existance/
+#+BEGIN_SRC python
+  #!/usr/bin/env python
+  # -*- coding: utf-8 -*-
+
+  import os
+  import sys
+
+
+  def exists(path):
+      """Test whether a path exists.  Returns False for broken symbolic links"""
+      try:
+          st = os.stat(path)
+      except os.error:
+          return False
+      return True
+
+  def main():
+      if exists("/path/to/file"):
+          print "we can proceed"
+      else:
+          sys.exit('Check if /path/to/file esists. Exit.')
+
+  if __name__ == '__main__':
+      main()
+
+  # end of script
 #+END_SRC
 
 There are a lot of ways to open a files in Python, here is more reliable more

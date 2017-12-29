@@ -1,0 +1,13 @@
+
+** Basics
+#+BEGIN_SRC sh
+vagrant up
+vagrant up --provider=virtualbox
+vagrant status
+vagrant halt
+#+END_SRC
+* Referances
+** Links
+- https://www.vagrantup.com/docs/providers/basic_usage.html
+- https://rpmfusion.org/Howto/VirtualBox
+- https://www.virtualbox.org/wiki/Linux_Downloads

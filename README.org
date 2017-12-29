@@ -16,5 +16,26 @@ The sentimental.
 -- Boris Pasternak
 #+END_QUOTE
 
+* Project structure
+
+#+BEGIN_SRC sh :results value org :results output replace :exports results
+pwd | rev  | cut -d"/" -f1 | rev
+tree -d -L 3
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC org
+wds
+.
+├── wds-devops
+├── wds-emacs
+│   └── snippets
+│       ├── org-mode
+│       └── sh-mode
+├── wds-hacks
+└── wds-python
+
+7 directories
+#+END_SRC
 
 Repository of my IT way of config/set up/hacks.

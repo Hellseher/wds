@@ -1,6 +1,6 @@
 ;;; init-local.el -- Custom local variables and functios.
 ;;; Created       : Thu 11 Aug 2016 22:32:01
-;;; Modified      : <2017-5-11 Thu 22:20:24 BST> sharlatan
+;;; Modified      : <2017-8-02 Wed 21:47:49 BST> sharlatan
 ;;; Author        : Sharlatan <sharlatanus@gmail.com>
 ;;; Maintainer(s) : Sharlatan
 ;;; Commentary:
@@ -9,13 +9,11 @@
 ;;;
 ;;; Code:
 
-(defvar exzellenz/required-packages '(evil
-                                      org-beautify-theme
-                                      org-bullets
+(defvar exzellenz/required-packages '(org-bullets
                                       ggtags
                                       yasnippet
                                       multi-term
-                                      dockerfile-mode)
+                                      )
   "Required custom packages for exzellenz set up.")
 (dolist (pkg exzellenz/required-packages)
   (require-package pkg))
@@ -30,83 +28,12 @@
 (add-hook 'before-save-hook 'time-stamp)
 
 
-;;; Evil-mode
-(setq evil-toggle-key "C-'")
-
-;;; Org-mode
-;;
-;; http://ehneilsen.net/notebook/orgExamples/org-examples.html
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-
-(setq org-src-fontify-natively t)
-
-;; Lots of stuff from http://doc.norang.ca/org-mode.html
-
-;; (after-load 'org
-;;   (org-babel-do-load-languages
-;;    'org-babel-load-languages
-;;    `((plantuml . t))))
-
-;; (setq org-plantuml-jar-path
-;;       (expand-file-name "~/.emacs.d/plantuml.jar"))
-
-;; (defun exzellenz/grab-plantuml (url jar-name)
-;;   "Download URL and extract JAR-NAME as `org-plantuml-jar-path'."
-;;   ;; TODO: handle errors
-;;   (message "Grabbing " jar-name " for org.")
-;;   (let ((zip-temp (make-temp-name "emacs-plantuml")))
-;;     (unwind-protect
-;;         (progn
-;;           (when (executable-find "unzip")
-;;             (url-copy-file url zip-temp)
-;;             (shell-command (concat "unzip -p " (shell-quote-argument zip-temp)
-;;                                    " " (shell-quote-argument jar-name) " > "
-;;                                    (shell-quote-argument org-plantuml-jar-path)))))
-;;       (when (file-exists-p zip-temp)
-;;         (delete-file zip-temp)))))
-
-;; (after-load 'ob-plantuml
-;;   (unless (and (boundp 'org-plantuml-jar-path)
-;;                (file-exists-p org-plantuml-jar-path))
-;;     (let ((jar-name "plantuml.jar")
-;;           (url "http://sourceforge.net/projects/plantuml/files/plantuml-jar-gplv2-8055.zip"))
-;;       (setq org-plantuml-jar-path (expand-file-name jar-name (file-name-directory user-init-file)))
-;;       (unless (file-exists-p org-plantuml-jar-path)
-;;         (exzellenz/grab-plantuml url jar-name)))))
-
-
-
-;;; flycheck
-;; http://www.flycheck.org/en/latest/
-
-
-;;; GNU Global
-;; https://github.com/leoliu/ggtags
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
-              (ggtags-mode 1))))
-
-
-;;;Yas-snipets
-;; http://joaotavora.github.io/yasnippet/
-(add-hook 'yas
-          (setq yas-snippet-dirs (file-expand-wildcards "~/.emacs.d/elpa/yasnippet*/snippets"))
-          (setq yas-snippet-dirs (append yas-snippet-dirs
-                                         '("~/.emacs.d/snippets"))))
-(yas-global-mode 1)
-
 ;;; tramp
 ;; https://www.gnu.org/software/tramp/
 (defvar tramp-default-method)
 (after-load 'tramp
   (setq tramp-default-method "ssh"))
 
-
-;;; Guix
-;; https://www.gnu.org/software/guix/
-                                        ;(add-to-list 'load-path "~/.guix-profile/share/emacs/site-lisp/")
-                                        ;(require 'guix-autoload)
 
 ;;; multi-term
 ;; https://www.emacswiki.org/emacs/download/multi-term.el
@@ -120,10 +47,6 @@
             (add-to-list 'term-bind-key-alist '("C-c C-k" . term-char-mode))
             ))
 (global-set-key (kbd "C-c T") 'multi-term)
-
-;;; Docker
-;;
-
 
 ;;; Custom functios
 ;;
@@ -198,7 +121,6 @@
 ;; 2015-07-04 bug of pasting in emacs.
 ;; http://debbugs.gnu.org/cgi/bugreport.cgi?bug=16737#17
 ;; http://ergoemacs.org/misc/emacs_bug_cant_paste_2015.html
-(setq x-selection-timeout 300)
 
 (provide 'init-local)
 ;;; init-local.el ends here

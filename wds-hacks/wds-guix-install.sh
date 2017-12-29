@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # File     : wds-guix-install.sh
 # Created  : <2017-07-23 Sun 00:40:54 BST>
-# Modified : <2017-7-31 Mon 23:50:05 BST> sharlatan
+# Modified : <2017-8-01 Tue 23:27:57 BST> sharlatan
 # Author   : sharlatan
 # Synopsis :
 
@@ -23,7 +23,7 @@ set -e
 #+DEFAUL_CONFIG
 
 CMD_VER=0.0.1
-CMDNAME=wds-guix-install.sh
+CMDNAME=wds-guix-install
 REQUIRE=(
     "dirname"
     "readlink"
@@ -48,6 +48,7 @@ ERR=$'[ \033[31;1mERR\033[0m ] '
 INF="[ INF ] "
 
 FTP_URL="ftp://alpha.gnu.org/gnu/guix/"
+HTTS_URL="https://alpha.gnu.org/gnu/guix/"
 
 # ------------------------------------------------------------------------------
 #+UTILITIES_FUNCTIONS
@@ -372,14 +373,14 @@ sys_hydra_enable()
 welcome()
 {
  cat << "EOF"
-   _____ _   _ _    _    _____       _       _____ _____
-  / ____| \ | | |  | |  / ____|     (_)     / ____|  __ \
- | |  __|  \| | |  | | | |  __ _   _ ___  _| (___ | |  | |
- | | |_ | . ` | |  | | | | |_ | | | | \ \/ /\___ \| |  | |
- | |__| | |\  | |__| | | |__| | |_| | |>  < ____) | |__| |
-  \_____|_| \_|\____/   \_____|\__,_|_/_/\_\_____/|_____/
+   _____ _   _ _    _    _____       _
+  / ____| \ | | |  | |  / ____|     (_)
+ | |  __|  \| | |  | | | |  __ _   _ ___  _
+ | | |_ | . ` | |  | | | | |_ | | | | \ \/ /
+ | |__| | |\  | |__| | | |__| | |_| | |>  <
+  \_____|_| \_|\____/   \_____|\__,_|_/_/\_\
 
-This set up install GNU GuixSD on your system
+This set up install GNU Guix on your system
 
 (c) https://www.gnu.org/software/guix/
 EOF
