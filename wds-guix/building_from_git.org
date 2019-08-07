@@ -1,0 +1,56 @@
+# File      : building_from_git.org
+# Created   : <2019-08-07 Wed 23:00:37 BST>
+# Modified  : <2019-8-08 Thu 00:38:42 BST> Sharlatan
+# Author    : Sharlatan
+# Synopsis  : <>
+
+#+TITLE: Building Guix and contributing to packages
+
+* First
+
+The documentation sucks as usually!
+
+As described in [[https://guix.gnu.org/manual/en/html_node/Building-from-Git.html#Building-from-Git][14.1 Building from Git]] you can start from creating
+build environment and linking all required dependencies to it first to
+prevent any future "whoopsyes" during build stage.
+
+#+BEGIN_SRC sh
+guix pull && guix package -u && guix package -i git
+
+git clone https://git.savannah.gnu.org/git/guix.git
+guix environment guix --ad-hoc pkg-config autoconf automake gettext \
+       texinfo graphviz help2man guile-gcrypt gnutls guile-sqlite3 \
+       guile-git guile-json zlib make git
+cd guix
+./bootstrap
+./configure --localstatedir=/var
+[ -e "./pre-inst-env" ] || echo "FAILED"
+sudo -E ./pre-inst-env guix-daemon --build-users-group=guixbuild # press Enter
+./pre-inst-env guix build hello
+#+END_SRC
+
+If everything passed without any failures and you could built package
+~hello~ in the end - NOW you can hack on Guix and packages!
+
+** Issues
+*** 0001
+issue
+: ./configure
+: configure: error: chosen localstatedir '/usr/local/var' does not match that of the existing installation '/var'
+
+to resolve
+: ./configure --localstatedir=/var
+
+*** 0002
+issue
+#+begin_example
+sudo -E ./pre-inst-env guix-daemon --build-users-group=guixbuild --debug
+extra chroot directories: ''
+automatic deduplication set to 1
+listening on `/var/guix/daemon-socket/socket'
+#+end_example
+
+to resolve
+: Press Enter
+
+# End of building_from_git.org
