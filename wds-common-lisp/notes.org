@@ -1,0 +1,35 @@
+# File      : notes.org
+# Created   : <2020-01-12 Sun 21:22:32 GMT>
+# Modified  : <2020-1-12 Sun 21:38:15 GMT> Sharlatan
+# Author    : Sharlatan
+# Synopsis  : <>
+
+* Timeline
+
+** Q: How to load ASDF ready system to your fresh image?
+*** Solution
+The easyest way is to perform that task via Quicklisp package
+manager and Emacs's SLIME package.
+
+*** Pre-requirements:
++ You have Emacs semi configured and running.
++ You have SLIME package installed.
++ You have one the implementation of CL compiler installed and running
+  (SBCL).
++ Quicklisp installed and configured with your compiler to load
+  automatically.
+
+*** Actions
++ (emacs) ~M-x slime~ ; Starting SLIME connection to the CL image
++ (CL-USER) (load (from-home-path "path/to/your/file.asd"))
++ (CL-USER) (ql:quickload :name-of-your-system)
+
+*** Result
+If you your system is defined correctly Quicklisp start all
+dependencies specified to you the image.
+
+
+* Glossary
+- <<<image>>>
+- <<<system>>>
+# End of notes.org
