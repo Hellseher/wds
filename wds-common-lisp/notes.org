@@ -1,6 +1,6 @@
 # File      : notes.org
 # Created   : <2020-01-12 Sun 21:22:32 GMT>
-# Modified  : <2020-02-11 Tue 00:58:31 GMT> Sharlatan
+# Modified  : <2020-02-11 Tue 01:08:32 GMT> Sharlatan
 # Author    : Sharlatan
 # Synopsis  : <>
 
@@ -26,8 +26,8 @@ manager and Emacs's SLIME package if you are not using systems like GUIX.
 emacs> M-x slime ; Starting SLIME connection to the CL image
 #+end_example
 With ASDF you have predefined locations where it tries to search for
-files with ~asd~ extension [[https://gitlab.common-lisp.net/asdf/asdf/blob/master/source-registry.lisp#L198][source-registry]] if some of them are already
-presented in your configuration just put you project with ~asd~ file
+files with ~asd~ extension [[https://gitlab.common-lisp.net/asdf/asdf/blob/master/source-registry.lisp#L198][source-registry]]. If some of them are already
+presented in your configuration just place the project with ~asd~ file
 there or create some under $HOME.
 
 #+begin_example
@@ -41,17 +41,19 @@ for system definitions from REPL session.
 - https://common-lisp.net/project/asdf/asdf.html#Configuring-ASDF-to-find-your-systems
 - https://common-lisp.net/project/asdf/asdf.html#Controlling-where-ASDF-searches-for-systems
 
-When you put your project to one of the locations it becomes available both for =quicklisp= and =asdf=.
+When you put the project to one of the locations it becomes available
+both for =quicklisp= and =asdf=.
 
-Quicklisp takes care about all ~:depens-on :SYSTEMNAME~ statements in
-~asd~ file and download them from it's registry which is updated once
-per month.
+Quicklisp takes care about all ~:depends-on :SYSTEMNAME~ statements in
+~asd~ file and download them from it's registry if missing. Registry
+has updates once per month. For more rapid updates wheather use
+https://guix.gnu.org/ or https://ultralisp.org/
 #+begin_example
 CL-USER> (ql:quickload :name-of-your-system)
 #+end_example
 
 In case when you are on the system like GUIX, and don't want using any
-other package manager just load your project with =asdf= itself and
+other package managers just load your project with =asdf= itself and
 install missing packages by =guix= facility. Also take a look at
 [[https://guix.gnu.org/manual/en/html_node/Defining-Packages.html][package definition]] and [[https://guix.gnu.org/manual/en/html_node/Invoking-guix-environment.html][development environment]].
 #+begin_example
