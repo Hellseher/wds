@@ -1,32 +1,128 @@
 # File      : notes.org
 # Created   : <2020-01-12 Sun 21:22:32 GMT>
-# Modified  : <2020-1-12 Sun 22:26:29 GMT> Sharlatan
+# Modified  : <2020-02-11 Tue 00:58:31 GMT> Sharlatan
 # Author    : Sharlatan
 # Synopsis  : <>
 
 * Timeline
 
 ** Q-200112222429: How to load ASDF ready system to your fresh image?
-*** Solution
-The easyest way is to perform that task via Quicklisp package
-manager and Emacs's SLIME package.
+*** Synopsis
+The easiest way is to perform it via Quicklisp package
+manager and Emacs's SLIME package if you are not using systems like GUIX.
 
-*** Pre-requirements:
+*** Require
 + You have Emacs semi configured and running.
-+ You have SLIME package installed.
 + You have one of the implementations of CL compiler installed and
   running (SBCL).
++ You have SLIME package installed and configured to work with your compiler.
 + Quicklisp is installed and configured with your compiler to load
   automatically.
+  + Optional: on GUIX you don't need Quicklisp, most of packages are
+    available for installation [[https://git.savannah.gnu.org/cgit/guix.git/tree/gnu/packages/lisp-xyz.scm][lisp-xyz]]
 
 *** Actions
-+ <emacs> ~M-x slime~ ; Starting SLIME connection to the CL image
-+ <CL-USER> (load (from-home-path "path/to/your/file.asd"))
-+ <CL-USER> (ql:quickload :name-of-your-system)
+#+begin_example
+emacs> M-x slime ; Starting SLIME connection to the CL image
+#+end_example
+With ASDF you have predefined locations where it tries to search for
+files with ~asd~ extension [[https://gitlab.common-lisp.net/asdf/asdf/blob/master/source-registry.lisp#L198][source-registry]] if some of them are already
+presented in your configuration just put you project with ~asd~ file
+there or create some under $HOME.
+
+#+begin_example
+CL-USER> (require :asdf)
+CL-USER> (asdf/source-registry::default-user-source-registry)
+CL-USER> (asdf/source-registry::default-system-source-registry)
+#+end_example
+
+Documentation was not so clear on how to check which paths are probed
+for system definitions from REPL session.
+- https://common-lisp.net/project/asdf/asdf.html#Configuring-ASDF-to-find-your-systems
+- https://common-lisp.net/project/asdf/asdf.html#Controlling-where-ASDF-searches-for-systems
+
+When you put your project to one of the locations it becomes available both for =quicklisp= and =asdf=.
+
+Quicklisp takes care about all ~:depens-on :SYSTEMNAME~ statements in
+~asd~ file and download them from it's registry which is updated once
+per month.
+#+begin_example
+CL-USER> (ql:quickload :name-of-your-system)
+#+end_example
+
+In case when you are on the system like GUIX, and don't want using any
+other package manager just load your project with =asdf= itself and
+install missing packages by =guix= facility. Also take a look at
+[[https://guix.gnu.org/manual/en/html_node/Defining-Packages.html][package definition]] and [[https://guix.gnu.org/manual/en/html_node/Invoking-guix-environment.html][development environment]].
+#+begin_example
+CL-USER> (asdf:load-system :name-of-your-system)
+#+end_example
 
 *** Result
 If your system is defined correctly Quicklisp starts to load all
-dependencies specified in the system to the current image.
+dependencies specified in the
+~ASDF_SOURCE_REGISTRY/PROJECT_NAME/file.asd~ to the current image.
+
+If you manage all dependencies yourself =asdf= starts loading your
+~ASDF_SOURCE_REGISTRY/PROJECT_NAME/file.asd~
+
+** Q-200201000044: What are the default packages of SBCL?
+*** Synopsis
+I needed to compare bare installations of SBCL of the same versions on
+few machines. There was Guix and Fedora 31.
+*** Require
++ Installed SBCL
+*** Actions
+There is an option of invoking ~sbls~ with evaluating arbitrary code
+non-interacting it's a good combination with *nix CLI tools.
+#+BEGIN_SRC sh :results value org replace
+  sbcl --noinform \
+       --no-sysinit \
+       --no-userinit \
+       --non-interactive \
+       --eval '(loop for pkg in (list-all-packages) do (format t "~A ~%" pkg))' \
+      | sort
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC org
+#<PACKAGE "COMMON-LISP">
+#<PACKAGE "COMMON-LISP-USER">
+#<PACKAGE "KEYWORD">
+#<PACKAGE "SB-ALIEN">
+#<PACKAGE "SB-ALIEN-INTERNALS">
+#<PACKAGE "SB-APROF">
+#<PACKAGE "SB-ASSEM">
+#<PACKAGE "SB-BIGNUM">
+#<PACKAGE "SB-C">
+#<PACKAGE "SB-DEBUG">
+#<PACKAGE "SB-DI">
+#<PACKAGE "SB-DISASSEM">
+#<PACKAGE "SB-EVAL">
+#<PACKAGE "SB-EXT">
+#<PACKAGE "SB-FASL">
+#<PACKAGE "SB-FORMAT">
+#<PACKAGE "SB-GRAY">
+#<PACKAGE "SB-IMPL">
+#<PACKAGE "SB-INT">
+#<PACKAGE "SB-KERNEL">
+#<PACKAGE "SB-LFL">
+#<PACKAGE "SB-LOOP">
+#<PACKAGE "SB-MOP">
+#<PACKAGE "SB-PCL">
+#<PACKAGE "SB-PRETTY">
+#<PACKAGE "SB-PROFILE">
+#<PACKAGE "SB-REGALLOC">
+#<PACKAGE "SB-SEQUENCE">
+#<PACKAGE "SB-SYS">
+#<PACKAGE "SB-THREAD">
+#<PACKAGE "SB-UNICODE">
+#<PACKAGE "SB-UNIX">
+#<PACKAGE "SB-VM">
+#<PACKAGE "SB-WALKER">
+#<PACKAGE "SB-X86-64-ASM">
+#+END_SRC
+
 
 
 * Glossary

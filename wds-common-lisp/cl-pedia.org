@@ -1,0 +1,293 @@
+# File     : cl-pedia.org
+# Created  : <2017-01-25 Wed 21:57:00 GMT>
+# Modified : <2020-02-11 Tue 00:48:52 GMT> Sharlatan
+# Author   : sharlatan
+# Synopsis : <>
+
+#+OPTIONS: num:nil
+#+SETUPFILE: theme-bigblow.setup
+
+* Characters
+** Asterics [*]
+It is usualy used in definition of global variables.
+
+#+BEGIN_SRC lisp
+(defparameter *global-variable* '(it is an asigment to a global-variable))
+(defvar *global-variable-with-defvar* '(shorter version))
+#+END_SRC
+
+** Backtick/backquote [`]
+Constructs quasiquoting form.
+#+begin_example
+CL-USER> (let ((a 'one)
+               (b 'two))
+             `(,a ,b three))
+
+(ONE TWO THREE)
+#+end_example
+** Colon [:]
+- keyword :: is a part of optional function parametes
+: package:symbol
+: package::symbol
+It allows to access symbols in other package(s).
+** Comma [,]
+It used in quasiquoting to enable embanded Lisp code.
+
+#+BEGIN_SRC lisp
+  (defun describe-path (edge) `(there is a ,(caddr edge) going ,(cadr edge) from
+  here.))
+
+  > (describe-path '(garden west door)) (THERE IS A DOOR GOING WEST FROM HERE.)
+#+END_SRC
+
+** Conjunction [&]
+Optional arguments to function.
+*** Optimal argumets: &optional
+*** Named parameters: &key
+*** Variable number of arguments: &rest
+*** &allow-other-keys
+** Dot [.]
+** Pipiline [|]
+** Semicolon [;]
+Start comments, which will be ignored by compiler
+** Sharpsign[#]
+
+| s. backslash   | # | \ | ~#\X~      | literal character X          |
+| s. quote       | # | ' | ~#'FOO~    |                              |
+| s. dot         | # | . | ~#.FOO~    |                              |
+| s. plus        | # | + | ~#+FOO~    | read-time conditionalization |
+| s. P           | # | P | ~#P""~     | /path/to/location            |
+| s. culon       | # | : | ~#:SYMBOL~ | determine uninterned symbol  |
+| s. minuse      | # | - | ~#-FOO~    | read-time conditionalization |
+| s. parenthesis | # | ( | ~#(FOO)~   | define an array              |
+
+** Single-quote [']
+#+BEGIN_EXAMPLE
+ 'foo => FOO ''foo => (QUOTE FOO) (cdr '(quote foo)) => (FOO) (car ''foo) =>
+ QUOTE
+#+END_EXAMPLE
+
+* Utils and tools
+
+Find specification of OBJECT or STREAM-DESIGNATOR:
+: CL-USER> (cl:describe describe)
+
+Find all avalable package(s) in current image:
+: CL-USER> (cl:list-all-packages)
+
+Get user configuration init path name:
+: CL-USER> (sb-impl::userinit-pathname)
+
+Get all available information of known system:
+: CL-USER> (describe (asdf:find-system "asdf"))
+
+Get all system(s) registered in ASDF for the current image:
+: CL-USER> (asdf:registered-systems)
+
+** Stats
+Print to ~*STANDARD-OUTPUT*~ info about the state of internal storage and its management:
+: CL-USER> (cl:room)
+: CL-USER> (room)
+
+Execute FORM and print timing information on ~*TRACE-OUTPUT*~
+: CL-USER> (cl:time (room))
+
+** Variables
+
+There is a number of informative global variables:
+| ~asdf:*default-encoding*~        | Default encoding for source files.    |
+| ~asdf:*user-cache*~              | where the user keeps his FASL cache   |
+| ~cl:*modules*~                   | Returns a list of loaded modules      |
+| ~cl:*package*~                   | Returns curent package                |
+| ~ql:*local-project-directories*~ | The default local projects directory. |
+| ~cl:*features*~                  |                                       |
+| ~ql:*quicklisp-home*~            |                                       |
+
+* Convension
+Collected from different sources.
+- system deffination :: file name.asdf ~(defsystem "name")~
+* Glosary
+- <<<argument>>> :: the information prosented to the function, in Lisp could be
+                    atom(s) or list(s).
+- <<<array>>> ::
+  #+BEGIN_EXAMPLE
+  make-array
+  aref
+  row-major-aref
+
+  #+END_EXAMPLE
+- <<<atom>>> :: this term comes from the historical meaning of the word a.,
+                which means "indivisible". As for Lisp a. is general name of
+                other class of object(s): number(s), symbol(s), function(s),
+                string(s), character(s), emty list(s).
+
+                All type of numbers are *a.*
+                : CL-USER> (atom 2) T CL-USER> (atom 2.0) T CL-USER> (atom #b101) T
+
+                Symbol(s) are *a.*
+                : CL-USER> (atom '+) T
+
+                In a list, a. are separated from each other by whitespaces.
+                : (atom-one atom-two atom-three)
+
+                Emty list is an a. as well.
+                : CL-USER> (atom ()) T
+- <<<bind>>> :: assosiate value, function with a symbol
+- <<<closuer>>> ::
+- <<<tagbody>>> ::
+- <<<compile>>> ::
+- <<<curring>>> ::
+- <<<compiler>>> ::
+- <<<designator>>> :: is an object that denotes another object.
+- <<<evaluation>>> ::
+- <<<FASL>>> ::
+- <<<file>>> ::
+- <<<function>>> ::
+  - side effect of *f.*:
+  - nullary *f.*: a small functions that have zero arguments. Lispers will often
+    create such *f.* order to describe a computation that they don’t want to
+    run until later. In this scenario, a *f.* without arguments is com- monly
+    called a thunk or a suspension.
+  - *f.* call:
+  - *f.* definition: code attached to a symbol telling computer what to do.
+  - *f.* form:
+  - generic *f.*: a f. that can accept multiple datatypes as parameter(s) and
+    handle them appropriately.
+  - higher-order *f.* programming: the style of programming that relies heavily on
+    passing *f.* as value(s).
+  - higher-order *f.*: a f. which takes another f. as arguments.
+    #+BEGIN_EXAMPLE
+    (mapcar FUNCTION LIST)
+    #+END_EXAMPLE
+  - examples of realated functionality:
+  #+BEGIN_EXAMPLE
+  (defun <name> (list of arguments)
+      "docstring"
+      (function body))
+
+  fmakunbound
+  #+END_EXAMPLE
+- <<<homoiconic>>> :: programming language stores its program code and program
+     data in a similar format. Lisp’s quoting, quasiquoting, eval , and macro
+     features make it extremely homoiconic.
+- <<<hook>>> ::
+- <<<image>>> ::
+- <<<interpreter>>> ::
+- <<<lambda>>> [λ] ::
+  - l. function:
+  - l. calculus:
+- <<<library>>> :: file(s) with banch of code dedicated for a serten porpose,
+                   usually is a some kind of commpressed archive that can be
+                   downloaded somwere. Most well known way to destribute l. for
+                   Common Lisp is through [[https://www.quicklisp.org/beta/][Quicklisp]] l. manager.
+
+- <<<list>>> ::
+  - emty *l.*:
+  - association *l.* /alist/: consists of key/value pairs stored in a *l*.
+  - nested alist: The outer alist is organized based on the first
+    node, and the inner alists are organized based on the second node.
+  - dotted *l.*: a *l.* in LISP that ends in something other than a NIL. One
+    common and practical use for dotted *l.* in LISP programs is to elegantly
+    represent pairs.
+  - circular *l.*
+    #+BEGIN_EXAMPLE
+      ; use more complex printing routines for printing data structures.
+      (setf *print-circle* t)
+
+      CL-USER> (defparameter foo '(1 2 3))
+      FOO
+      CL-USER> (setf (cdddr foo) foo)
+      #1=(1 2 3 . #1#)
+    #+END_EXAMPLE
+- <<<macros>>> ::
+
+- <<<module>>> ::
+- <<<namespace>>> ::
+- <<<object>>> ::
+- <<<package>>> :: it's a way to create segregated namespace(s) or containers
+                   for symbol(s). The current *p.* is the one that is the value
+                   of ~*package*~ the process of putting a symbol into a *p.* is
+                   called interning. Common function(s) and variable(s) are
+                   linked to *p.*
+#+BEGIN_EXAMPLE
+*modules*            import                     provide
+*package*            in-package                 rename-package
+defpackage           intern                     require
+do-all-symbols       list-all-packages          shadow
+do-external-symbols  make-package               shadowing-import
+do-symbols           package-name               unexport
+export               package-nicknames          unintern
+find-all-symbols     package-shadowing-symbols  unuse-package
+find-package         package-use-list           use-package
+find-symbol          package-used-by-list       delete-package
+#+END_EXAMPLE
+- <<<keyword>>> ::
+- <<<parameter>>> ::
+  - keyword *p*.: is used by certain Lisp functions to let you choose which
+    parameters you want to pass in.
+- <<<predicate>>> :: refers to a function to determine whethere some property is
+     true of false.  in Lisp's usualy marks as last part of the symbol "...p",
+     "...-p"
+- <<<procedure>>> ::
+- <<<quasiquoting>>> :: allowsus to create chunks of data that have small pieces
+     of Lisp code embedded in them. To enable quasiquoting, you must use a
+     backquote [ ` ] not a single quote [ ' ] when switching from code to data
+     mode. Both the single quote and backquote in Lisp “flip” a piece of code
+     into data mode, but only a backquote can also be unquoted using the comma
+     character, to flip back into code mode.
+
+     #+BEGIN_EXAMPLE
+       CL-USER> (defun describe-path (edge)
+                `(there is a ,(caddr edge) going ,(cadr edge) from here.))
+       DESCRIBE-PATH
+       CL-USER> (describe-path '(garden west door))
+       (THERE IS A DOOR GOING WEST FROM HERE.)
+     #+END_EXAMPLE
+- <<<runtime>>> ::
+- <<<stream>>> ::
+- <<<string>>> :: *s.* of characters "something like that", *s.* is an atom
+- <<<symbol>>> :: can have both a fun. def. and a value attached to it at the
+                  same time
+  - keyword *s.* :
+  - *Symbolic expression* is a printed representation of both atom(s) and list(s).
+    - S-exp
+    - S-expression
+    - sexp
+  #+BEGIN_EXAMPLE
+  make-symbol
+  gentemp
+  #+END_EXAMPLE
+- <<<system>>> ::
+- <<<value>>> ::
+- <<<variable>>> :: a symbol that has a value
+
+* Appendix
+** Implimentation
+| RELEASED | NAME                            | LICENCE    | LINK                          |
+|----------+---------------------------------+------------+-------------------------------|
+|     1999 | *SBCL* /Steel Bank Common Lisp/ | BSD/Public | http://www.sbcl.org/          |
+|     1987 | *GNU CLISP*                     | GPL        | https://clisp.sourceforge.io/ |
+|     1989 | *LispWorks*                     | Compercial | http://www.lispworks.com/     |
+|          | *AlegroCL*                      |            |                               |
+|          | *ABCL*                          |            |                               |
+|          | *GCL*                           |            |                               |
+|          | *CMUCL*                         |            |                               |
+|          | *MCL* /Macintosh Common Lisp/   |            |                               |
+|          | *ECL*                           |            |                               |
+|----------+---------------------------------+------------+-------------------------------|
+** Standards
+- ANSI standard X3J13 (X3.226-1994), approved December 8, 1994
+** Bebliograpy
+- *Why Functional Programmin Metters* by John Hughes
+- Research Topics in Functional Programming” ed. D. Turner, Addison-Wesley, 1990
+** Links
+- https://lispcookbook.github.io
+- https://www.nicklevine.org/
+- http://markwatson.com/
+- https://www.xach.com/lisp/
+- http://planet.lisp.org/
+- http://www.flownet.com/gat/packages.pdf
+- https://www-fourier.ujf-grenoble.fr/~sergerar/Papers/Packaging.pdf
+- http://www.t3x.org/
+- http://dept-info.labri.fr/~strandh/Teaching/MTP/Common/David-Lamkins/about.htmli
+# End of  cl-pedia.org
