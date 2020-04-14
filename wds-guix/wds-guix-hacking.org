@@ -1,6 +1,6 @@
 # File      : wds-guix-hacking.org
 # Created   : <2020-4-13 Mon 20:18:03 BST>
-# Modified  : <2020-4-14 Tue 17:22:37 BST>
+# Modified  : <2020-4-14 Tue 17:27:18 BST>
 # Author    : Sharlatan
 # Synopsis  : <Random hacks and findings>
 
@@ -26,8 +26,9 @@ This file accumulates different findings and hacks around Guix OS.
   on system level at all.
 - The hole system is configured from one single point, it means there is no
   cluttered configuration files in ~/etc/~. The system is defined and described
-  in Guile Scheme file which includes partitioning, timezone, locales, users,
-  groups, system-wide package(s), system-wide services, kernel, kernel parameters etc.
+  in Guile Scheme file which includes mounts, timezone, locales, users, groups,
+  system-wide package(s), system-wide services, kernel type and version, kernel
+  parameters etc.
   - ~guix system --help~
 - Supported kernels: Linux-libre and Hurd
   - https://git.savannah.gnu.org/cgit/guix.git/tree/gnu/packages/linux.scm
@@ -63,7 +64,7 @@ enable SSH access.
 
 #+BEGIN_EXAMPLE
 (guix)$ sudo su
-(guix)# sed -i -e 's/[;]*(service openssh-service-type)/(service openssh-serivce-type)/'
+(guix)# sed -i -e 's/[;]*(service openssh-service-type)/(service openssh-service-type)/'
 (guix)# guix system reconfigure /etc/config.scm
 #+END_EXAMPLE
 
@@ -92,21 +93,21 @@ all available package(s), derivation(s) and profile(s)
 └── var
 #+END_EXAMPLE
 
-| Directory | Description                               |
-| ~/bin~    | Mainly empty, not in use most of the time |
-| ~/dev~    | Device files (same as described in LBS)   |
-| ~/boot~   |                                           |
-| ~/etc/~   |                                           |
-| ~/gnu~    |                                           |
-| ~/home~   |                                           |
-| ~/media~  |                                           |
-| ~/mnt~    |                                           |
-| ~/proc~   |                                           |
-| ~/root~   |                                           |
-| ~/run~    |                                           |
-| ~/sys~    |                                           |
-| ~/tmp~    |                                           |
-| ~/var~    |                                           |
+| Directory    | Description                               |
+| ~/bin~       | Mainly empty, not in use most of the time |
+| ~/dev~       | Device files (same as described in LBS)   |
+| ~/boot~      |                                           |
+| ~/etc/~      |                                           |
+| ~/gnu/store~ |                                           |
+| ~/home~      |                                           |
+| ~/media~     |                                           |
+| ~/mnt~       |                                           |
+| ~/proc~      |                                           |
+| ~/root~      |                                           |
+| ~/run~       |                                           |
+| ~/sys~       |                                           |
+| ~/tmp~       |                                           |
+| ~/var~       |                                           |
 
 * Glossary
 - <<<module>>>
