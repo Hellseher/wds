@@ -1,0 +1,112 @@
+# File      : building_from_git.org
+# Created   : <2019-08-07 Wed 23:00:37 BST>
+# Modified  : <2020-4-13 Mon 20:24:49 BST>
+# Author    : Sharlatan
+# Synopsis  : <>
+
+#+TITLE: Building Guix and contributing to packages
+
+* Synopsis
+
+Step by step
+
+~Disiared result~ - to write/build/patch own package.
+
+* First
+
+The documentation sucks as usually! (c) Sharlatan
+
+As described in [[https://guix.gnu.org/manual/en/html_node/Building-from-Git.html#Building-from-Git][14.1 Building from Git]] you can start from creating
+build environment and linking all required dependencies to it first to
+prevent any future "whoopsyes" during build stage.
+
+#+begin_quote
+also it might easier to have a branch with your changes and re-base
+your branch from master after pulling. this way your changes
+are applied on top. it's easier to deal with conflicts this
+way.
+#+end_quote
+
+
+#+BEGIN_SRC sh
+guix pull && guix package -u && guix package -i git
+
+test -e guix || git clone https://git.savannah.gnu.org/git/guix.git
+cd guix
+git pull
+guix environment guix --ad-hoc pkg-config autoconf automake gettext \
+       texinfo graphviz help2man guile-gcrypt gnutls guile-sqlite3 \
+       guile-git guile-json zlib make git
+./bootstrap
+./configure --localstatedir=/var
+make
+[ -e "./pre-inst-env" ] || echo "FAILED"
+sudo -E ./pre-inst-env guix-daemon --build-users-group=guixbuild & # press Enter
+./pre-inst-env guix build hello
+#+END_SRC
+
+If everything passed without any failures and you could built package
+~hello~ in the end - NOW you can hack on Guix and packages!
+
+* Packages
+
+#+BEGIN_SRC lisp
+  (define-public rust-rand
+      (package
+       (name "rust-rand")
+       (version "0.7.0")
+       (source
+        (origin
+         (method url-fetch)
+         (uri (crate-uri "rand" version))
+         (file-name (string-append name "-" version ".tar.gz"))
+         (sha256
+          (base32
+           "0b05gwx8nnxr9bydyjxd1rszdvqnm946ky15z103ssfrhc7anznl"))))
+       (build-system cargo-build-system)
+       (home-page "https://crates.io/crates/rand")
+       (synopsis "A Rust library for random number generation.")
+       (description "Rand provides utilities to generate random numbers, to
+  convert them to useful types and distributions, and some randomness-related
+  algorithms.  The core random number generation traits of Rand live in the
+  rand_core crate but are also exposed here; RNG implementations should prefer
+  to use rand_core while most other users should depend on rand.")
+       (license (list license:asl2.0 license:expat))))
+#+END_SRC
+** Issues
+*** 0001
+issue
+: ./configure
+: configure: error: chosen localstatedir '/usr/local/var' does not match that of the existing installation '/var'
+
+to resolve
+: ./configure --localstatedir=/var
+
+*** 0002
+issue
+#+begin_example
+sudo -E ./pre-inst-env guix-daemon --build-users-group=guixbuild --debug
+extra chroot directories: ''
+automatic deduplication set to 1
+listening on `/var/guix/daemon-socket/socket'
+#+end_example
+
+to resolve
+: Press Enter
+
+*** 0003
+issue
+
+Can't build modified ~gnu/packages/crates-io.scm~
+#+begin_example
+lpt-t420 ~/Projects/guix [env]$ ./pre-inst-env guix build rust-rand --keep-failed
+guix build: error: rust-rand: unknown package
+#+end_example
+
+to resolve
+
+ you need to run ~make~ after ~configure~, be pacient as it
+will build all Gule scheme sources for Guix, about 30m-1h on ThinkPad
+T420 i5 dualcore
+* Referances
+- [[https://guix.gnu.org/manual/en/html_node/Packaging-Guidelines.html][14.4 Packaging Guidelines]]

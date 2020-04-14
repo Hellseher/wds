@@ -1,0 +1,126 @@
+# File      : wds-guix-hacking.org
+# Created   : <2020-4-13 Mon 20:18:03 BST>
+# Modified  : <2020-4-14 Tue 17:22:37 BST>
+# Author    : Sharlatan
+# Synopsis  : <Random hacks and findings>
+
+#+TITLE: Guix Hacking
+
+* Synopsis
+
+This file accumulates different findings and hacks around Guix OS.
+
+* Facts
+- Links:
+  - homepage: https://guix.gnu.org/
+  - git-main: https://git.savannah.gnu.org/cgit/guix.git/
+  - git-related-projects: https://git.savannah.gnu.org/cgit/guix/
+  - CI substitution(s): http://ci.guix.gnu.org/
+- *Guix* is a package manager and operating system as well. It could be used as
+  standalone OS or installed inside existing OS other the *Guix*.
+- *Guix* uses profile(s) per user to link librarians and executables.
+- Any user can install any package *without previlagius access* (no sudo or root).
+- It utilizes symlinks a lot!!!
+- The hole project utilizes Guile Scheme as a main tool for writing module(s)
+  and wrapping package(s) definition, it means no shell|perl|python etc wrappers are used
+  on system level at all.
+- The hole system is configured from one single point, it means there is no
+  cluttered configuration files in ~/etc/~. The system is defined and described
+  in Guile Scheme file which includes partitioning, timezone, locales, users,
+  groups, system-wide package(s), system-wide services, kernel, kernel parameters etc.
+  - ~guix system --help~
+- Supported kernels: Linux-libre and Hurd
+  - https://git.savannah.gnu.org/cgit/guix.git/tree/gnu/packages/linux.scm
+  - https://git.savannah.gnu.org/cgit/guix.git/tree/gnu/packages/hurd.scm
+- Supported architectures: x86_64, i686, armhf, aarch64
+- Supported initialisation system: Shepherd
+  - https://www.gnu.org/software/shepherd/
+   
+* Howtos
+** Q-200414161702: How to try it right now?
+If you need to feel the *Guix* without warring about where to deploy it
+(hardware or cloud) there is a very simple way for that - provided pre-build
+qemu image. It could be obtained from https://ftp.gnu.org/gnu/guix/,
+<2020-04-14 Tue> ~guix-system-vm-image-1.0.1.x86_64-linux.xz~
+
+Requirements:
+- kvm hardware support
+- installed qemu
+- downloaded image
+- ssh client on the host machine
+
+#+BEGIN_EXAMPLE
+qemu-system-x86_64 \
+   -net user,hostfwd=tcp::10022-:22
+   -net nic,model=virtio \
+   -enable-kvm -m 512 \
+   -device virtio-blk,drive=myhd \
+   -drive if=none,file=/path/to/qemu-image,id=myhd
+#+END_EXAMPLE
+
+If it's booted successfully you'll see running OS with xfce WM. There is a way to
+enable SSH access.
+
+#+BEGIN_EXAMPLE
+(guix)$ sudo su
+(guix)# sed -i -e 's/[;]*(service openssh-service-type)/(service openssh-serivce-type)/'
+(guix)# guix system reconfigure /etc/config.scm
+#+END_EXAMPLE
+
+** Q-200414164538: What is default directory structure used in Guix?
+Comparing to other GNU/Linux distributions there are fewer root directories
+configured during OS deployment. The most important is ~/gnu/store~ which holds
+all available package(s), derivation(s) and profile(s)
+
+#+BEGIN_EXAMPLE
+(guix)$ tree -L 1 -d /
+/
+├── bin
+├── boot
+├── dev
+├── etc
+├── gnu
+├── home
+├── lost+found
+├── media
+├── mnt
+├── proc
+├── root
+├── run
+├── sys
+├── tmp
+└── var
+#+END_EXAMPLE
+
+| Directory | Description                               |
+| ~/bin~    | Mainly empty, not in use most of the time |
+| ~/dev~    | Device files (same as described in LBS)   |
+| ~/boot~   |                                           |
+| ~/etc/~   |                                           |
+| ~/gnu~    |                                           |
+| ~/home~   |                                           |
+| ~/media~  |                                           |
+| ~/mnt~    |                                           |
+| ~/proc~   |                                           |
+| ~/root~   |                                           |
+| ~/run~    |                                           |
+| ~/sys~    |                                           |
+| ~/tmp~    |                                           |
+| ~/var~    |                                           |
+
+* Glossary
+- <<<module>>>
+- <<<package>>>
+- <<<profile>>>
+- <<<derivation>>>
+- <<<qemu>>>
+- <<<kvm>>>
+- <<<substitution>>>
+* References
+- 8.15 Running Guix in a Virtual Machine
+  https://guix.gnu.org/manual/en/html_node/Running-Guix-in-a-VM.html
+- https://www.gnu.org/software/guile/
+- 8 System Configuration
+  https://guix.gnu.org/manual/en/guix.html#System-Configuration
+- https://gitlab.com/pjotrp/guix-notes
+- https://github.com/alezost/guix-config
