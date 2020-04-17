@@ -1,6 +1,6 @@
 # File      : wds-guix-hacking.org
 # Created   : <2020-4-13 Mon 20:18:03 BST>
-# Modified  : <2020-4-14 Tue 17:27:18 BST>
+# Modified  : <2020-4-17 Fri 15:42:55 BST>
 # Author    : Sharlatan
 # Synopsis  : <Random hacks and findings>
 
@@ -108,15 +108,292 @@ all available package(s), derivation(s) and profile(s)
 | ~/sys~       |                                           |
 | ~/tmp~       |                                           |
 | ~/var~       |                                           |
+** Q-200417140224: How to configure and run a system service?
+Based on "One config to rule them all" pricibple, services (daemons) could be
+configured from single entry point ~/etc/config.scm~. Each service is defined
+in Scheme modules, which need to be loaded first.
 
-* Glossary
-- <<<module>>>
-- <<<package>>>
-- <<<profile>>>
-- <<<derivation>>>
-- <<<qemu>>>
-- <<<kvm>>>
-- <<<substitution>>>
+- (use-system-module <name-of-defined-system-modules>) :: this procedure loads
+  system defination with all availalbe configureation options
+- (service <service-name>-service-type (<service-name>-configuration)) :: full
+  specifcation of loaded service.
+
+Here is an example of how to bring SSH server to live. Module declarations
+https://git.savannah.gnu.org/cgit/guix.git/tree/gnu/services/ssh.scm
+https://git.savannah.gnu.org/cgit/guix.git/tree/gnu.scm
+
+~/etc/config.scm~
+#+BEGIN_SRC scheme
+(use-modules (gnu))
+(use-system-modules ssh)
+
+(operating-system
+ ;; ... some previus global configurations
+
+ (services
+  (append
+   (list
+    (service openssh-service-type
+             (openssh-configuration
+              ;; Name of the file where sshd writes its PID.
+              (pid-file "/var/run/sshd.pid")
+              ;; TCP port on which sshd listens for incoming connections.
+              (port-number 22)
+              ;; This field determines whether and when to allow logins as root.
+              ;; #t - allow root login
+              ;; #t - denay root login
+              ;; 'without-password - allow root login with not password-based authentication
+              (permit-root-login #f)
+              ;; #t - users with empty passwords may log in.
+              ;; #f - users with empty passwords may not log in.
+              (allow-empty-passwords?  #f)
+              ;; #t - users may log in with their password.
+              ;; #f - they have other authentication methods.
+              (password-authentication? #t)
+              ;; Authorized public keys are stored in ~/.ssh/authorized_keys.
+              ;; #t - users may log in using public key authentication.
+              ;; #f - users have to use other authentication method.
+              (public-key-authentication? #t)
+              ;; #t - forwarding of X11 graphical client connections is enabled—in
+              ;; #f - X11 forwarding is disalbed
+              (x11-forwarding? #f)
+              ;; Whether to allow agent forwarding.
+              (allow-agent-forwarding? #t)
+              ;; Whether to allow TCP forwarding.
+              (allow-tcp-forwarding? #t)
+              ;; Whether to allow gateway ports.
+              (gateway-ports? #f)
+              ;; Specifies whether challenge response authentication is allowed (e.g. via PAM).
+              (challenge-response-authentication? #f)
+              ;; Enables the Pluggable Authentication Module interface. If set to #t, this
+              ;; will enable PAM authentication using challenge-response-authentication?
+              ;; and password-authentication?, in addition to PAM account and session
+              ;; module processing for all authentication types. Because PAM challenge
+              ;; response authentication usually serves an equivalent role to password
+              ;; authentication, you should disable either
+              ;; challenge-response-authentication? or password-authentication?.
+              (use-pam?  #t)
+              ;; Specifies whether sshd should print the date and time of the last user
+              ;; login when a user logs in interactively.
+              (print-last-log? #t)
+              ;; Configures external subsystems (e.g. file transfer daemon). This is a
+              ;; list of two-element lists, each of which containing the subsystem name
+              ;; and a command (with optional arguments) to execute upon subsystem
+              ;; request.
+              (subsystems '(("sftp" "internal-sftp")))
+              ;; List of strings describing which environment variables may be exported.
+              (accepted-environment '())
+              ;; This is the list of authorized keys. Each element of the list is a user
+              ;; name followed by one or more file-like objects that represent SSH public
+              ;; keys. For example:
+              (authorized-keys '())
+              ;; This is a symbol specifying the logging level: quiet, fatal, error, info,
+              ;; verbose, debug, etc. See the man page for sshd_config for the full list
+              ;; of level names.
+              (log-level 'info)
+              ;; This field can be used to append arbitrary text to the configuration
+              ;; file. It is especially useful for elaborate configurations that cannot be
+              ;; expressed otherwise. This configuration, for example, would generally
+              ;; disable root logins
+              (extra-content  "")))))))
+#+END_SRC
+
+Each system wide manipulation requires evaluation it's reconfiguration
+
+: guix pull
+: guix system reconfigure /etc/config.scm
+
+One needs to run full system reconfiguration every time when there is any need of
+modifing, adding, removing services settings. Eeach system reconfiguration
+creates new generation, it could be reverted back to previos generation if
+curren one is failed. Each generation is awailalbe during boot time as well.
+
+List of all availalbe service definations:
+#+BEGIN_SRC sh :results value org :results output replace :exports results
+if [ ! -d $HOME/code ]
+then
+    mkdir $HOME/code
+fi
+if [ ! -d $HOME/code/guix/.git ]
+then
+    git clone https://git.savannah.gnu.org/git/guix.git $HOME/code/
+else
+    git -C $HOME/code/guix pull
+fi
+grep -r -- "define .*-service-type" $HOME/code/guix  \
+    | grep -v -- "/doc\|/tests\|Already" \
+    | sed -e 's/:(define */ /' \
+    | grep -v "(" \
+    | column -t \
+    | grep -oP '(?<=/code/guix/).*'
+#+END_SRC
+
+#+RESULTS:
+#+begin_src org
+Already up to date.
+gnu/system/install.scm            documentation-service-type
+gnu/system/install.scm            cow-store-service-type
+gnu/system/install.scm            configuration-template-service-type
+gnu/system/install.scm            uvesafb-service-type
+gnu/system/shadow.scm             account-service-type
+gnu/system/linux-container.scm    dummy-networking-service-type
+gnu/system/mapped-devices.scm     device-mapping-service-type
+gnu/system/pam.scm                session-environment-service-type
+gnu/system/pam.scm                pam-root-service-type
+gnu/services/authentication.scm   fprintd-service-type
+gnu/services/authentication.scm   nslcd-service-type
+gnu/services/dbus.scm             dbus-root-service-type
+gnu/services/dbus.scm             polkit-service-type
+gnu/services/pm.scm               tlp-service-type
+gnu/services/pm.scm               thermald-service-type
+gnu/services/base.scm             user-processes-service-type
+gnu/services/base.scm             fstab-service-type
+gnu/services/base.scm             root-file-system-service-type
+gnu/services/base.scm             file-system-service-type
+gnu/services/base.scm             urandom-seed-service-type
+gnu/services/base.scm             rngd-service-type
+gnu/services/base.scm             host-name-service-type
+gnu/services/base.scm             virtual-terminal-service-type
+gnu/services/base.scm             console-keymap-service-type
+gnu/services/base.scm             console-font-service-type
+gnu/services/base.scm             login-service-type
+gnu/services/base.scm             agetty-service-type
+gnu/services/base.scm             mingetty-service-type
+gnu/services/base.scm             nscd-service-type
+gnu/services/base.scm             syslog-service-type
+gnu/services/base.scm             pam-limits-service-type
+gnu/services/base.scm             guix-service-type
+gnu/services/base.scm             guix-publish-service-type
+gnu/services/base.scm             udev-service-type
+gnu/services/base.scm             swap-service-type
+gnu/services/base.scm             gpm-service-type
+gnu/services/base.scm             kmscon-service-type
+gnu/services/base.scm             static-networking-service-type
+gnu/services/linux.scm            earlyoom-service-type
+gnu/services/linux.scm            kernel-module-loader-service-type
+gnu/services/sddm.scm             sddm-service-type
+gnu/services/certbot.scm          certbot-service-type
+gnu/services/dns.scm              knot-service-type
+gnu/services/dns.scm              knot-resolver-service-type
+gnu/services/dns.scm              dnsmasq-service-type
+gnu/services/dns.scm              ddclient-service-type
+gnu/services/sysctl.scm           sysctl-service-type
+gnu/services/rsync.scm            rsync-service-type
+gnu/services/auditd.scm           auditd-service-type
+gnu/services/mail.scm             dovecot-service-type
+gnu/services/mail.scm             opensmtpd-service-type
+gnu/services/mail.scm             mail-aliases-service-type
+gnu/services/mail.scm             exim-service-type
+gnu/services/mail.scm             imap4d-service-type
+gnu/services/ssh.scm              lsh-service-type
+gnu/services/ssh.scm              openssh-service-type
+gnu/services/ssh.scm              dropbear-service-type
+gnu/services/version-control.scm  git-daemon-service-type
+gnu/services/version-control.scm  gitolite-service-type
+gnu/services/audio.scm            mpd-service-type
+gnu/services/cuirass.scm          cuirass-service-type
+gnu/services/avahi.scm            avahi-service-type
+gnu/services/security-token.scm   pcscd-service-type
+gnu/services/kerberos.scm         krb5-service-type
+gnu/services/kerberos.scm         pam-krb5-service-type
+gnu/services/monitoring.scm       darkstat-service-type
+gnu/services/monitoring.scm       prometheus-node-exporter-service-type
+gnu/services/monitoring.scm       zabbix-server-service-type
+gnu/services/monitoring.scm       zabbix-agent-service-type
+gnu/services/monitoring.scm       zabbix-front-end-service-type
+gnu/services/admin.scm            rottlog-service-type
+gnu/services/sound.scm            alsa-service-type
+gnu/services/sound.scm            pulseaudio-service-type
+gnu/services/sound.scm            ladspa-service-type
+gnu/services/mcron.scm            mcron-service-type
+gnu/services/nix.scm              nix-service-type
+gnu/services/messaging.scm        prosody-service-type
+gnu/services/messaging.scm        bitlbee-service-type
+gnu/services/messaging.scm        quassel-service-type
+gnu/services/desktop.scm          upower-service-type
+gnu/services/desktop.scm          geoclue-service-type
+gnu/services/desktop.scm          bluetooth-service-type
+gnu/services/desktop.scm          colord-service-type
+gnu/services/desktop.scm          udisks-service-type
+gnu/services/desktop.scm          elogind-service-type
+gnu/services/desktop.scm          accountsservice-service-type
+gnu/services/desktop.scm          cups-pk-helper-service-type
+gnu/services/desktop.scm          sane-service-type
+gnu/services/desktop.scm          gnome-desktop-service-type
+gnu/services/desktop.scm          mate-desktop-service-type
+gnu/services/desktop.scm          xfce-desktop-service-type
+gnu/services/desktop.scm          enlightenment-desktop-service-type
+gnu/services/desktop.scm          inputattach-service-type
+gnu/services/desktop.scm          gnome-keyring-service-type
+gnu/services/dict.scm             dicod-service-type
+gnu/services/xorg.scm             slim-service-type
+gnu/services/xorg.scm             screen-locker-service-type
+gnu/services/xorg.scm             localed-service-type
+gnu/services/xorg.scm             gdm-service-type
+gnu/services/getmail.scm          getmail-service-type
+gnu/services/databases.scm        postgresql-service-type
+gnu/services/databases.scm        memcached-service-type
+gnu/services/databases.scm        mongodb-service-type
+gnu/services/databases.scm        mysql-service-type
+gnu/services/databases.scm        redis-service-type
+gnu/services/virtualization.scm   libvirt-service-type
+gnu/services/virtualization.scm   virtlog-service-type
+gnu/services/virtualization.scm   qemu-binfmt-service-type
+gnu/services/nfs.scm              rpcbind-service-type
+gnu/services/nfs.scm              pipefs-service-type
+gnu/services/nfs.scm              gss-service-type
+gnu/services/nfs.scm              idmap-service-type
+gnu/services/nfs.scm              nfs-service-type
+gnu/services/pam-mount.scm        pam-mount-service-type
+gnu/services/games.scm            wesnothd-service-type
+gnu/services/networking.scm       dhcp-client-service-type
+gnu/services/networking.scm       dhcpd-service-type
+gnu/services/networking.scm       ntp-service-type
+gnu/services/networking.scm       openntpd-service-type
+gnu/services/networking.scm       tor-service-type
+gnu/services/networking.scm       tor-hidden-service-type
+gnu/services/networking.scm       wicd-service-type
+gnu/services/networking.scm       network-manager-service-type
+gnu/services/networking.scm       connman-service-type
+gnu/services/networking.scm       modem-manager-service-type
+gnu/services/networking.scm       usb-modeswitch-service-type
+gnu/services/networking.scm       wpa-supplicant-service-type
+gnu/services/networking.scm       openvswitch-service-type
+gnu/services/networking.scm       iptables-service-type
+gnu/services/networking.scm       nftables-service-type
+gnu/services/networking.scm       pagekite-service-type
+gnu/services/spice.scm            spice-vdagent-service-type
+gnu/services/lirc.scm             lirc-service-type
+gnu/services/telephony.scm        murmur-service-type
+gnu/services/vpn.scm              openvpn-server-service-type
+gnu/services/vpn.scm              openvpn-client-service-type
+gnu/services/guix.scm             guix-data-service-type
+gnu/services/shepherd.scm         shepherd-root-service-type
+gnu/services/web.scm              httpd-service-type
+gnu/services/web.scm              nginx-service-type
+gnu/services/web.scm              fcgiwrap-service-type
+gnu/services/web.scm              php-fpm-service-type
+gnu/services/web.scm              hpcguix-web-service-type
+gnu/services/web.scm              tailon-service-type
+gnu/services/web.scm              varnish-service-type
+gnu/services/web.scm              patchwork-service-type
+gnu/services/web.scm              mumi-service-type
+gnu/services/cups.scm             cups-service-type
+gnu/services/cgit.scm             cgit-service-type
+gnu/services.scm                  lookup-service-types
+gnu/services.scm                  system-service-type
+gnu/services.scm                  boot-service-type
+gnu/services.scm                  provenance-service-type
+gnu/services.scm                  cleanup-service-type
+gnu/services.scm                  activation-service-type
+gnu/services.scm                  special-files-service-type
+gnu/services.scm                  etc-service-type
+gnu/services.scm                  setuid-program-service-type
+gnu/services.scm                  profile-service-type
+gnu/services.scm                  firmware-service-type
+gnu/services.scm                  gc-root-service-type
+#+end_src
+
 * References
 - 8.15 Running Guix in a Virtual Machine
   https://guix.gnu.org/manual/en/html_node/Running-Guix-in-a-VM.html
