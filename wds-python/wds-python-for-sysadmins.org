@@ -1,6 +1,6 @@
 # File         : wds-python-for-sysamin.org
 # Created      : Tue 11 Oct 2016 23:24:38
-# Modified     : <2017-12-29 Fri 23:26:57 GMT> Sharlatan
+# Modified     : <2020-01-30 Thu 23:39:49 GMT> Sharlatan
 # Author       : sharlatan <sharlatanus@gmail.com>
 # Maintainer(s : sharlatan
 # Short        : Comparison Python with shell scripting.

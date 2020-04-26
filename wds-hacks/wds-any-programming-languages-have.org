@@ -1,0 +1,41 @@
+# File           : wds-any-programming-languages-have.org
+# Created        : <2018-08-18 Sat 13:25:49 BST>
+# Last Modified  : <2018-8-18 Sat 15:43:00 BST> Sharlatan
+# Author         : Sharlatan
+# Synopsis       :
+
+** From Sympols to Meaning
+#+BEGIN_EXAMPLE
+1 2 3 4 5 6 7 8 9 0
+a b c d e f g h j k l m n o p q r s t u v x y z
+A B C D E F G H J K L M N O P Q R S T U V X Y Z
+` ¬ ! " £ $ % ^ & * ( ) - _ = + [ ] { } @ ' # ~ / ? \ |
+#+END_EXAMPLE
+** From Meaning to Sympols
+** Key points
+- file
+- package
+- library
+- module
+- system
+- mutex
+** Data types
+| NAME |  |
+|------+---|
+| byte |   |
+| bit  |   |
+|      |   |
+|------+---|
+
+*** Scalars
+| LENGTH  | POWER |
+|---------+-------|
+| 8-bit   |   2^4 |
+| 16-bit  |   2^8 |
+| 32-bit  |   2^9 |
+| 128-bit |  2^10 |
+|---------+-------|
+k
+
+
+# End of wds-any-programming-languages-have.org

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # File     : wds-lfs-chk.sh
 # Created  : <2018-6-26 Tue 23:50:52 BST>
-# Modified : <2018-6-27 Wed 01:54:43 BST> Sharlatan
+# Modified : <2018-7-07 Sat 01:42:50 BST> Sharlatan
 # Author   : sharlatan
 # Synopsis : <Check all requirements for the host to buld LFS>
 
@@ -26,9 +26,14 @@ REQUIRE=(
     "chown"
     "cut"
     "diff"
+    "md5sum"
+    "wget"
+    "mkdir"
+    "mount"
     "find"
     "g++"
     "gawk"
+    "mkfs"
     "gcc"
     "bash"
     "grep"
@@ -190,39 +195,70 @@ chk_pkg ()
     done
 }
 
-# ------------------------------------------------------------------------------
-
-scractch ()
+chk_build_sys ()
 {
-export LC_ALL=C
+
+    _msg "--- [ $FUNCNAME ] ---"
+
+    _msg "your dinamik linker is:"
+    echo
+    readelf -l /bin/ls | grep interpreter
+    echo
+    _msg "linker search order PATH"
+    echo
+    ld --verbose | grep "SEARCH"
+    echo
+
+    echo 'int main(){}' > dummy.c && g++ -o dummy dummy.c
+    if [ -x dummy ]; then
+        _msg "${PAS}g++ compilation";
+    else
+        _msg "${ERR}g++ compilation"
+    fi
+    rm -f dummy.c dummy
+
+    echo 'int main(){}' > dummy.c && gcc -o dummy dummy.c
+    if [ -x dummy ]; then
+        _msg "${PAS}gcc compilation";
+    else
+        _msg "${ERR}gcc compilation"
+    fi
+    rm -f dummy.c dummy
+}
+
+# ------------------------------------------------------------------------------
+recomendations ()
+{
+    cat <<EOF
+
+    Your host system should have the following software with the minimum
+    versions indicated.
 
 
-if [ -h /usr/bin/yacc ]; then
-  echo "/usr/bin/yacc -> `readlink -f /usr/bin/yacc`";
-elif [ -x /usr/bin/yacc ]; then
-  echo yacc is `/usr/bin/yacc --version | head -n1`
-else
-  echo "yacc not found" 
-fi
+    Bash-3.2 (/bin/sh should be a symbolic or hard link to bash)
+    Binutils-2.17 (Versions greater than 2.30 are not recommended as they have not been tested)
+    Bison-2.3 (/usr/bin/yacc should be a link to bison or small script that executes bison)
+    Bzip2-1.0.4
+    Coreutils-6.9
+    Diffutils-2.8.1
+    Findutils-4.2.31
+    Gawk-4.0.1 (/usr/bin/awk should be a link to gawk)
+    GCC-4.7
+    Glibc-2.11
+    Grep-2.5.1a
+    Gzip-1.3.12
+    Linux Kernel-3.2
+    M4-1.4.10
+    Make-3.81
+    Patch-2.5.4
+    Perl-5.8.8
+    Sed-4.1.5
+    Tar-1.22
+    Texinfo-4.7
+    Xz-5.0.0
 
-bzip2 --version 2>&1 < /dev/null | head -n1 | cut -d" " -f1,6-
-echo -n "Coreutils: "; chown --version | head -n1 | cut -d")" -f2
+EOF
 
-if [ -h /usr/bin/awk ]; then
-  echo "/usr/bin/awk -> `readlink -f /usr/bin/awk`";
-elif [ -x /usr/bin/awk ]; then
-  echo awk is `/usr/bin/awk --version | head -n1`
-else 
-  echo "awk not found" 
-fi
-
-cat /proc/version
-
-echo 'int main(){}' > dummy.c && g++ -o dummy dummy.c
-if [ -x dummy ]
-  then echo "g++ compilation OK";
-  else echo "g++ compilation failed"; fi
-rm -f dummy.c dummy
 }
 
 main ()
@@ -231,10 +267,16 @@ main ()
     printf "Start %s v%s at %s\n\n" "$CMD_NAME" "$CMD_VER" "$(date)"
 
     chk_term
-    chk_require "${REQUIRE[*]}"
+    chk_require "${REQUIRE[*]}" || exit 1
     chk_version "${REQUIRE[*]}"
     chk_link "${REQUIRE[*]}"
     chk_pkg "${REQUIRE[*]}"
+
+    chk_build_sys
+
+    _msg "${INF}$(cat /proc/version)"
+
+    recomendations
 }
 
 main "$@"

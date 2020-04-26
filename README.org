@@ -1,9 +1,7 @@
-# File          : README.org
-# Created       : [2016-09-10 Sat 20:45]
-# Last Modified : Sat 24 Sep 2016 23:38:55 sharlatan
-# Author        : Hellseher <sharlatanus@gmail.com>
-# Maintainer(s) :
-# Short :
+# File      : README.org
+# Author    : Sharlatan <sharlatanus@gmail.com>
+# Created   : <2016-09-10 Sat 20:45>
+# Modified  : <2020-1-19 Sun 13:44:50 GMT> Sharlatan
 
 * Weg des Schwertes
 /剣の道/
@@ -24,18 +22,27 @@ tree -d -L 3
 #+END_SRC
 
 #+RESULTS:
-#+BEGIN_SRC org
+#+begin_src org
 wds
 .
+├── wds-common-lisp
 ├── wds-devops
 ├── wds-emacs
 │   └── snippets
+│       ├── c-mode
+│       ├── emacs-lisp-mode
 │       ├── org-mode
-│       └── sh-mode
+│       ├── rust-mode
+│       ├── sh-mode
+│       └── yaml-mode
+├── wds-guix
+│   └── packages
 ├── wds-hacks
 └── wds-python
 
-7 directories
-#+END_SRC
+14 directories
+#+end_src
 
 Repository of my IT way of config/set up/hacks.
+
+# End of README.org

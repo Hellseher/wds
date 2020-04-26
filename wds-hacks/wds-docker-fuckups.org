@@ -1,0 +1,153 @@
+# File      : wds-docker-fuckups.org
+# Created   : <2018-10-02 Tue 21:26:22 BST>
+# Modified  : <2018-10-03 Wed 00:26:37 BST> Sharlatan
+# Author    : Sharlatan
+# Synopsis  : <Long way of "play" with docker...>
+
+#+OPTIONS: toc:nil num:nil
+
+#+TITLE: Docker way
+#+BEGIN_QUOTE
+Developers should write programs as if the most important communication is to
+the developer who will read and maintain the program, rather than the computer.
+This rule aims to make code as readable and comprehensible as possible for
+whoever works on the code in the future.
+#+END_QUOTE
+
+* Abstract 
+<2018-10-02 Tue 21:31> Tried to test some flavour of AWX with Docker on Fedora
+28, but it failed. Let's start from the very beginning...
+* DONE Get Docker up and running on Fedora 28
+  CLOSED: [2018-10-02 Tue 22:37]
+
+#+BEGIN_SRC sh :dir /sudo:: :results value org replace :exports both
+  dnf install docker -yq
+  dnf automate
+  systemctl enable docker
+  systemctl start docker
+  docker run hello-world
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC org
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+#+END_SRC
+
+So what we should have in the end is installed and running of Docker service of
+version available in Fedora repository.
+
+#+BEGIN_SRC sh :dir /sudo:: :results value org replace :exports both
+  dnf list --installed docker
+  echo
+  systemctl -n0 status docker
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC org
+Installed Packages
+docker.x86_64                2:1.13.1-61.git9cb56fd.fc28                @updates
+
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)
+   Active: active (running) since Tue 2018-10-02 21:45:22 BST; 1h 51min ago
+     Docs: http://docs.docker.com
+ Main PID: 24603 (dockerd-current)
+    Tasks: 22 (limit: 8192)
+   Memory: 23.6M
+   CGroup: /system.slice/docker.service
+           └─24603 /usr/bin/dockerd-current --add-runtime oci=/usr/libexec/do…rg
+#+END_SRC
+* DONE Resolve issue - Cannot connect to the Docker daemon
+  CLOSED: [2018-10-03 Wed 00:01]
+After basic installation still have the same error which I had before re-installation.
+
+Service ~docker~ is running under root and requires sudo/root access to communicate with.
+
+#+BEGIN_SRC sh :dir /sudo:: :results value org replace :exports both
+  echo "your UID is: ${UID}"
+  echo
+  docker info | head -n6 | column -t -s: 
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC org
+your UID is: 0
+
+Containers       13
+ Running         0
+ Paused          0
+ Stopped         13
+Images           1
+Server Version   1.13.1
+#+END_SRC
+* DONE docker-compose issue 
+  CLOSED: [2018-10-03 Wed 00:25]
+First of all to make sure it is installed.
+#+BEGIN_SRC sh :dir /sudo:: :results value org replace :exports both
+dnf install docker-compose -yq
+dnf list --installed docker-compose
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC org
+Installed Packages
+docker-compose.noarch                   1.20.1-1.fc28                    @fedora
+#+END_SRC
+
+Now try to download and install it
+#+BEGIN_SRC sh :results value org replace :exports both
+  AWX_PATH="${HOME}/Data/sft/src/awx"
+
+  [ -e "${AWX_PATH}" ] || mkdir "${AWX_PATH}"
+  cd "${AWX_PATH}" &&
+      curl -O https://raw.githubusercontent.com/geerlingguy/awx-container/master/docker-compose.yml
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC org
+/home/Sharlatan/Data/sft/src/awx
+#+END_SRC
+
+And finnaly run it under ~sudo~:
+#+BEGIN_SRC sh :dir /sudo:: :results value org replace :exports both
+  AWX_PATH="/home/Sharlatan/Data/sft/src/awx"
+  cd "${AWX_PATH}"
+  docker-compose up -d &>/dev/null && docker -D info | head -n6 | column -t -s: 
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC org
+Containers       18
+ Running         5
+ Paused          0
+ Stopped         13
+Images           6
+Server Version   1.13.1
+#+END_SRC
+* TODO Sync local repositore with AWX image
+* References
+- https://org-babel.readthedocs.io/en/latest/header-args/#exports
+- https://developer.fedoraproject.org/tools/docker/docker-installation.html
+- https://github.com/geerlingguy/awx-container
+# End of wds-docker-fuckups.org

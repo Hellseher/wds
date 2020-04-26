@@ -260,7 +260,7 @@ find-symbol          package-used-by-list       delete-package
 - <<<system>>> ::
 - <<<value>>> ::
 - <<<variable>>> :: a symbol that has a value
-
+  - /lexical/ *v*
 * Appendix
 ** Implimentation
 | RELEASED | NAME                            | LICENCE    | LINK                          |

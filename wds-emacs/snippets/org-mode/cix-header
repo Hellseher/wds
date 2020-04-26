@@ -7,7 +7,7 @@
 # Modified       : `(format-time-string "<%Y-%m-%d %a %T %Z>" (current-time))`
 # Author         : `(user-login-name)`
 # Maintainer(s)  :
-# Sinopsis       :
+# Sinopsis       : <$0>
 
 #+OPTIONS: num:nil
 

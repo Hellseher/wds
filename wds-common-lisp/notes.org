@@ -1,6 +1,6 @@
 # File      : notes.org
 # Created   : <2020-01-12 Sun 21:22:32 GMT>
-# Modified  : <2020-02-11 Tue 01:08:32 GMT> Sharlatan
+# Modified  : <2020-02-15 Sat 09:58:36 GMT> Sharlatan
 # Author    : Sharlatan
 # Synopsis  : <>
 
@@ -48,6 +48,7 @@ Quicklisp takes care about all ~:depends-on :SYSTEMNAME~ statements in
 ~asd~ file and download them from it's registry if missing. Registry
 has updates once per month. For more rapid updates wheather use
 https://guix.gnu.org/ or https://ultralisp.org/
+
 #+begin_example
 CL-USER> (ql:quickload :name-of-your-system)
 #+end_example

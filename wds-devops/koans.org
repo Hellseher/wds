@@ -1,0 +1,17 @@
+# Created : <2020-1-17 Fri 20:26:32 GMT>
+# Modified : <2020-1-17 Fri 20:33:56 GMT> Sharlatan
+
+#+TITLE: Koans
+
+* Ansible
+** 200117202850-ansible
+*** Koan
+Return a list of file pathes recursivly found in the given PATH which excludes a
+given list of PATTERNS
+
+*** Meditation
+* Terraform
+* Vagrant
+* Aamazon Web Services (AWS)
+* Kubirnates (K2S)
+* Azure
