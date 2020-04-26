@@ -1,6 +1,6 @@
 # File      : wds-guix-hacking.org
 # Created   : <2020-4-13 Mon 20:18:03 BST>
-# Modified  : <2020-4-17 Fri 15:42:55 BST>
+# Modified  : <2020-4-17 Fri 15:45:32 BST>
 # Author    : Sharlatan
 # Synopsis  : <Random hacks and findings>
 
@@ -198,7 +198,7 @@ https://git.savannah.gnu.org/cgit/guix.git/tree/gnu.scm
               (extra-content  "")))))))
 #+END_SRC
 
-Each system wide manipulation requires evaluation it's reconfiguration
+Each system wide manipulation requires evaluation of it's reconfiguration
 
 : guix pull
 : guix system reconfigure /etc/config.scm
