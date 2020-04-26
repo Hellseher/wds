@@ -394,6 +394,9 @@ gnu/services.scm                  firmware-service-type
 gnu/services.scm                  gc-root-service-type
 #+end_src
 
+* Glossary
+
+
 * References
 - 8.15 Running Guix in a Virtual Machine
   https://guix.gnu.org/manual/en/html_node/Running-Guix-in-a-VM.html
