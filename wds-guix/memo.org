@@ -1,0 +1,542 @@
+# File      : memo.org
+# Created   : <2020-4-13 Mon 20:18:03 BST>
+# Modified  : <2020-12-03 Thu 14:20:10 GMT>
+# Author    : #Rλatan
+# Synopsis  : <Random hacks and findings>
+
+#+TITLE: Guix Hacking
+
+* Synopsis
+
+This file accumulates different findings and hacks around [[https://guix.gnu.org][Guix]] OS.
+
+* Facts
+- Links:
+  - homepage: https://guix.gnu.org/
+  - git-main: https://git.savannah.gnu.org/cgit/guix.git/
+  - git-related-projects: https://git.savannah.gnu.org/cgit/guix/
+  - CI substitution(s): http://ci.guix.gnu.org/
+- *Guix* is a package manager and operating system as well. It could be used as standalone OS or
+  installed inside existing OS other the *Guix*.
+- *Guix* uses profile(s) per user to link librarians and executables.
+- Any user can install any package *without privileged access* (no sudo or root).
+- It utilizes symlinks a lot.
+- The hole project utilizes Guile Scheme as a main tool for writing module(s)
+  and wrapping package(s) definition, it means no shell|perl|python etc wrappers are used
+  on system level at all.
+- The hole system is configured from one single point, it means there is no cluttered configuration
+  files in ~/etc/~. The system is defined and described in Guile Scheme file which includes mounts,
+  timezone, locales, users, groups, system-wide package(s), system-wide services, kernel type and
+  version, kernel parameters etc.
+  - ~guix system --help~
+- Supported kernels: Linux-libre and Hurd
+  - https://git.savannah.gnu.org/cgit/guix.git/tree/gnu/packages/linux.scm
+  - https://git.savannah.gnu.org/cgit/guix.git/tree/gnu/packages/hurd.scm
+- Supported architectures: x86_64, i686, armhf, aarch64
+- Supported initialisation system: Shepherd
+  - https://www.gnu.org/software/shepherd/
+- Build of the packages process may be outsourced and distributed on multiple machines.
+   
+* Timeline
+** memo-200414161702: How to try it right now?
+*** Synopsis
+If you need to feel the *Guix* without warring about where to deploy it (hardware or cloud) there is
+a very simple way for that - provided pre-build qemu image. It could be obtained from
+https://ftp.gnu.org/gnu/guix/, <2020-04-14 Tue> ~guix-system-vm-image-1.0.1.x86_64-linux.xz~
+
+*** Require
+- host machine with kvm hardware support
+- installed qemu
+- downloaded image
+- ssh client on the host machine
+
+*** Actions
+#+BEGIN_EXAMPLE
+qemu-system-x86_64 \
+   -net user,hostfwd=tcp::10022-:22
+   -net nic,model=virtio \
+   -enable-kvm -m 512 \
+   -device virtio-blk,drive=myhd \
+   -drive if=none,file=/path/to/qemu-image,id=myhd
+#+END_EXAMPLE
+
+If it's booted successfully you'll see running OS with xfce WM. There is a way to enable SSH access.
+
+#+BEGIN_EXAMPLE
+(guix)$ sudo su
+(guix)# sed -i -e 's/[;]*(service openssh-service-type)/(service openssh-service-type)/'
+(guix)# guix system reconfigure /etc/config.scm
+#+END_EXAMPLE
+
+** memo-200414164538: What is default directory structure used in Guix?
+*** Synopsis
+Comparing to other GNU/Linux distributions there are fewer root directories
+configured during OS deployment. The most important is ~/gnu/store~ which holds
+all available package(s), derivation(s) and profile(s)
+
+#+BEGIN_EXAMPLE
+(guix)$ tree -L 1 -d /
+/
+├── bin
+├── boot
+├── dev
+├── etc
+├── gnu
+├── home
+├── lost+found
+├── media
+├── mnt
+├── proc
+├── root
+├── run
+├── sys
+├── tmp
+└── var
+#+END_EXAMPLE
+
+| Directory    | Description                               |
+| ~/bin~       | Mainly empty, not in use most of the time |
+| ~/dev~       | Device files (same as described in LBS)   |
+| ~/boot~      |                                           |
+| ~/etc/~      |                                           |
+| ~/gnu/store~ |                                           |
+| ~/home~      |                                           |
+| ~/media~     |                                           |
+| ~/mnt~       |                                           |
+| ~/proc~      |                                           |
+| ~/root~      |                                           |
+| ~/run~       |                                           |
+| ~/sys~       |                                           |
+| ~/tmp~       |                                           |
+| ~/var~       |                                           |
+** memo-200417140224: How to configure and run a system service?
+*** Actions
+Based on "One config to rule them all" principle, services (daemons) could be
+configured from single entry point =/etc/config.scm=. Each service is defined
+in Scheme modules, which need to be loaded first.
+
+- (use-system-module <name-of-defined-system-modules>) :: this procedure loads
+  system definition with all available configuration options
+- (service <service-name>-service-type (<service-name>-configuration)) :: full
+  specification of loaded service.
+
+Here is an example of how to bring SSH server to live. Module declarations
+https://git.savannah.gnu.org/cgit/guix.git/tree/gnu/services/ssh.scm
+https://git.savannah.gnu.org/cgit/guix.git/tree/gnu.scm
+
+//etc/config.scm/
+#+BEGIN_SRC scheme
+(use-modules (gnu))
+(use-system-modules ssh)
+
+(operating-system
+ ;; ... some previous global configurations
+
+ (services
+  (append
+   (list
+    (service openssh-service-type
+             (openssh-configuration
+              ;; Name of the file where sshd writes its PID.
+              (pid-file "/var/run/sshd.pid")
+              ;; TCP port on which sshd listens for incoming connections.
+              (port-number 22)
+              ;; This field determines whether and when to allow logins as root.
+              ;; #t - allow root login
+              ;; #t - denay root login
+              ;; 'without-password - allow root login with not password-based authentication
+              (permit-root-login #f)
+              ;; #t - users with empty passwords may log in.
+              ;; #f - users with empty passwords may not log in.
+              (allow-empty-passwords?  #f)
+              ;; #t - users may log in with their password.
+              ;; #f - they have other authentication methods.
+              (password-authentication? #t)
+              ;; Authorized public keys are stored in ~/.ssh/authorized_keys.
+              ;; #t - users may log in using public key authentication.
+              ;; #f - users have to use other authentication method.
+              (public-key-authentication? #t)
+              ;; #t - forwarding of X11 graphical client connections is enabled—in
+              ;; #f - X11 forwarding is disalbed
+              (x11-forwarding? #f)
+              ;; Whether to allow agent forwarding.
+              (allow-agent-forwarding? #t)
+              ;; Whether to allow TCP forwarding.
+              (allow-tcp-forwarding? #t)
+              ;; Whether to allow gateway ports.
+              (gateway-ports? #f)
+              ;; Specifies whether challenge response authentication is allowed (e.g. via PAM).
+              (challenge-response-authentication? #f)
+              ;; Enables the Pluggable Authentication Module interface. If set to #t, this
+              ;; will enable PAM authentication using challenge-response-authentication?
+              ;; and password-authentication?, in addition to PAM account and session
+              ;; module processing for all authentication types. Because PAM challenge
+              ;; response authentication usually serves an equivalent role to password
+              ;; authentication, you should disable either
+              ;; challenge-response-authentication? or password-authentication?.
+              (use-pam?  #t)
+              ;; Specifies whether sshd should print the date and time of the last user
+              ;; login when a user logs in interactively.
+              (print-last-log? #t)
+              ;; Configures external subsystems (e.g. file transfer daemon). This is a
+              ;; list of two-element lists, each of which containing the subsystem name
+              ;; and a command (with optional arguments) to execute upon subsystem
+              ;; request.
+              (subsystems '(("sftp" "internal-sftp")))
+              ;; List of strings describing which environment variables may be exported.
+              (accepted-environment '())
+              ;; This is the list of authorized keys. Each element of the list is a user
+              ;; name followed by one or more file-like objects that represent SSH public
+              ;; keys. For example:
+              (authorized-keys '())
+              ;; This is a symbol specifying the logging level: quiet, fatal, error, info,
+              ;; verbose, debug, etc. See the man page for sshd_config for the full list
+              ;; of level names.
+              (log-level 'info)
+              ;; This field can be used to append arbitrary text to the configuration
+              ;; file. It is especially useful for elaborate configurations that cannot be
+              ;; expressed otherwise. This configuration, for example, would generally
+              ;; disable root logins
+              (extra-content  "")))))))
+#+END_SRC
+
+Each system wide manipulation requires evaluation of it's reconfiguration
+
+: guix pull
+: guix system reconfigure /etc/config.scm
+
+One needs to run full system reconfiguration every time when there is any need of
+modifying, adding, removing services settings. Each system reconfiguration
+creates new generation, it could be reverted back to previous generation if
+current one is failed. Each generation is available during boot time as well.
+
+List of all available service definitions:
+#+BEGIN_SRC sh :results value org :results output replace :exports results
+if [ ! -d $HOME/code ]
+then
+    mkdir $HOME/code
+fi
+if [ ! -d $HOME/code/guix/.git ]
+then
+    git clone https://git.savannah.gnu.org/git/guix.git $HOME/code/guix
+else
+    git -C $HOME/code/guix pull
+fi
+grep -r -- "define .*-service-type" $HOME/code/guix  \
+    | grep -v -- "/doc\|/tests\|Already" \
+    | sed -e 's/:(define */ /' \
+    | grep -v "(" \
+    | column -t \
+    | grep -oP '(?<=/code/guix/).*'
+#+END_SRC
+
+#+RESULTS:
+#+begin_src org
+gnu/system/shadow.scm             account-service-type
+gnu/system/linux-container.scm    dummy-networking-service-type
+gnu/system/mapped-devices.scm     device-mapping-service-type
+gnu/system/install.scm            documentation-service-type
+gnu/system/install.scm            cow-store-service-type
+gnu/system/install.scm            configuration-template-service-type
+gnu/system/install.scm            uvesafb-service-type
+gnu/system/pam.scm                session-environment-service-type
+gnu/system/pam.scm                pam-root-service-type
+gnu/services.scm                  lookup-service-types
+gnu/services.scm                  system-service-type
+gnu/services.scm                  boot-service-type
+gnu/services.scm                  provenance-service-type
+gnu/services.scm                  cleanup-service-type
+gnu/services.scm                  activation-service-type
+gnu/services.scm                  hurd-startup-service-type
+gnu/services.scm                  special-files-service-type
+gnu/services.scm                  etc-service-type
+gnu/services.scm                  setuid-program-service-type
+gnu/services.scm                  profile-service-type
+gnu/services.scm                  firmware-service-type
+gnu/services.scm                  gc-root-service-type
+gnu/services/ganeti.scm           ganeti-noded-service-type
+gnu/services/ganeti.scm           ganeti-confd-service-type
+gnu/services/ganeti.scm           ganeti-wconfd-service-type
+gnu/services/ganeti.scm           ganeti-luxid-service-type
+gnu/services/ganeti.scm           ganeti-rapi-service-type
+gnu/services/ganeti.scm           ganeti-kvmd-service-type
+gnu/services/ganeti.scm           ganeti-mond-service-type
+gnu/services/ganeti.scm           ganeti-metad-service-type
+gnu/services/ganeti.scm           ganeti-watcher-service-type
+gnu/services/ganeti.scm           ganeti-cleaner-service-type
+gnu/services/ganeti.scm           ganeti-service-type
+gnu/services/xorg.scm             slim-service-type
+gnu/services/xorg.scm             screen-locker-service-type
+gnu/services/xorg.scm             localed-service-type
+gnu/services/xorg.scm             gdm-service-type
+gnu/services/mcron.scm            mcron-service-type
+gnu/services/sound.scm            alsa-service-type
+gnu/services/sound.scm            pulseaudio-service-type
+gnu/services/sound.scm            ladspa-service-type
+gnu/services/web.scm              httpd-service-type
+gnu/services/web.scm              nginx-service-type
+gnu/services/web.scm              fcgiwrap-service-type
+gnu/services/web.scm              php-fpm-service-type
+gnu/services/web.scm              hpcguix-web-service-type
+gnu/services/web.scm              tailon-service-type
+gnu/services/web.scm              varnish-service-type
+gnu/services/web.scm              patchwork-service-type
+gnu/services/web.scm              mumi-service-type
+gnu/services/web.scm              gmnisrv-service-type
+gnu/services/science.scm          rshiny-service-type
+gnu/services/desktop.scm          upower-service-type
+gnu/services/desktop.scm          geoclue-service-type
+gnu/services/desktop.scm          bluetooth-service-type
+gnu/services/desktop.scm          colord-service-type
+gnu/services/desktop.scm          udisks-service-type
+gnu/services/desktop.scm          elogind-service-type
+gnu/services/desktop.scm          accountsservice-service-type
+gnu/services/desktop.scm          cups-pk-helper-service-type
+gnu/services/desktop.scm          sane-service-type
+gnu/services/desktop.scm          gnome-desktop-service-type
+gnu/services/desktop.scm          mate-desktop-service-type
+gnu/services/desktop.scm          xfce-desktop-service-type
+gnu/services/desktop.scm          lxqt-desktop-service-type
+gnu/services/desktop.scm          enlightenment-desktop-service-type
+gnu/services/desktop.scm          inputattach-service-type
+gnu/services/desktop.scm          gnome-keyring-service-type
+gnu/services/admin.scm            rottlog-service-type
+gnu/services/admin.scm            unattended-upgrade-service-type
+gnu/services/linux.scm            earlyoom-service-type
+gnu/services/linux.scm            kernel-module-loader-service-type
+gnu/services/linux.scm            zram-device-service-type
+gnu/services/nix.scm              nix-service-type
+gnu/services/security-token.scm   pcscd-service-type
+gnu/services/pam-mount.scm        pam-mount-service-type
+gnu/services/sddm.scm             sddm-service-type
+gnu/services/telephony.scm        murmur-service-type
+gnu/services/monitoring.scm       darkstat-service-type
+gnu/services/monitoring.scm       prometheus-node-exporter-service-type
+gnu/services/monitoring.scm       zabbix-server-service-type
+gnu/services/monitoring.scm       zabbix-agent-service-type
+gnu/services/monitoring.scm       zabbix-front-end-service-type
+gnu/services/cuirass.scm          cuirass-service-type
+gnu/services/lirc.scm             lirc-service-type
+gnu/services/dbus.scm             dbus-root-service-type
+gnu/services/dbus.scm             polkit-service-type
+gnu/services/auditd.scm           auditd-service-type
+gnu/services/ssh.scm              lsh-service-type
+gnu/services/ssh.scm              openssh-service-type
+gnu/services/ssh.scm              dropbear-service-type
+gnu/services/ssh.scm              autossh-service-type
+gnu/services/ssh.scm              webssh-service-type
+gnu/services/cgit.scm             cgit-service-type
+gnu/services/certbot.scm          certbot-service-type
+gnu/services/pm.scm               tlp-service-type
+gnu/services/pm.scm               thermald-service-type
+gnu/services/virtualization.scm   libvirt-service-type
+gnu/services/virtualization.scm   virtlog-service-type
+gnu/services/virtualization.scm   qemu-binfmt-service-type
+gnu/services/virtualization.scm   secret-service-type
+gnu/services/virtualization.scm   hurd-vm-service-type
+gnu/services/dict.scm             dicod-service-type
+gnu/services/base.scm             fstab-service-type
+gnu/services/base.scm             root-file-system-service-type
+gnu/services/base.scm             file-system-service-type
+gnu/services/base.scm             urandom-seed-service-type
+gnu/services/base.scm             rngd-service-type
+gnu/services/base.scm             host-name-service-type
+gnu/services/base.scm             virtual-terminal-service-type
+gnu/services/base.scm             console-keymap-service-type
+gnu/services/base.scm             console-font-service-type
+gnu/services/base.scm             login-service-type
+gnu/services/base.scm             agetty-service-type
+gnu/services/base.scm             mingetty-service-type
+gnu/services/base.scm             nscd-service-type
+gnu/services/base.scm             syslog-service-type
+gnu/services/base.scm             pam-limits-service-type
+gnu/services/base.scm             guix-service-type
+gnu/services/base.scm             guix-publish-service-type
+gnu/services/base.scm             udev-service-type
+gnu/services/base.scm             swap-service-type
+gnu/services/base.scm             gpm-service-type
+gnu/services/base.scm             kmscon-service-type
+gnu/services/base.scm             static-networking-service-type
+gnu/services/nfs.scm              rpcbind-service-type
+gnu/services/nfs.scm              pipefs-service-type
+gnu/services/nfs.scm              gss-service-type
+gnu/services/nfs.scm              idmap-service-type
+gnu/services/nfs.scm              nfs-service-type
+gnu/services/sysctl.scm           sysctl-service-type
+gnu/services/databases.scm        postgresql-service-type
+gnu/services/databases.scm        memcached-service-type
+gnu/services/databases.scm        mongodb-service-type
+gnu/services/databases.scm        mysql-service-type
+gnu/services/databases.scm        redis-service-type
+gnu/services/kerberos.scm         krb5-service-type
+gnu/services/kerberos.scm         pam-krb5-service-type
+gnu/services/mail.scm             dovecot-service-type
+gnu/services/mail.scm             opensmtpd-service-type
+gnu/services/mail.scm             mail-aliases-service-type
+gnu/services/mail.scm             exim-service-type
+gnu/services/mail.scm             imap4d-service-type
+gnu/services/messaging.scm        prosody-service-type
+gnu/services/messaging.scm        bitlbee-service-type
+gnu/services/messaging.scm        quassel-service-type
+gnu/services/guix.scm             guix-build-coordinator-service-type
+gnu/services/guix.scm             guix-build-coordinator-agent-service-type
+gnu/services/guix.scm             guix-build-coordinator-queue-builds-service-type
+gnu/services/guix.scm             guix-data-service-type
+gnu/services/vpn.scm              openvpn-server-service-type
+gnu/services/vpn.scm              openvpn-client-service-type
+gnu/services/authentication.scm   fprintd-service-type
+gnu/services/authentication.scm   nslcd-service-type
+gnu/services/audio.scm            mpd-service-type
+gnu/services/games.scm            wesnothd-service-type
+gnu/services/hurd.scm             hurd-console-service-type
+gnu/services/hurd.scm             hurd-getty-service-type
+gnu/services/rsync.scm            rsync-service-type
+gnu/services/shepherd.scm         shepherd-root-service-type
+gnu/services/shepherd.scm         user-processes-service-type
+gnu/services/cups.scm             cups-service-type
+gnu/services/version-control.scm  git-daemon-service-type
+gnu/services/version-control.scm  gitolite-service-type
+gnu/services/networking.scm       dhcp-client-service-type
+gnu/services/networking.scm       dhcpd-service-type
+gnu/services/networking.scm       ntp-service-type
+gnu/services/networking.scm       openntpd-service-type
+gnu/services/networking.scm       tor-service-type
+gnu/services/networking.scm       tor-hidden-service-type
+gnu/services/networking.scm       wicd-service-type
+gnu/services/networking.scm       network-manager-service-type
+gnu/services/networking.scm       connman-service-type
+gnu/services/networking.scm       modem-manager-service-type
+gnu/services/networking.scm       usb-modeswitch-service-type
+gnu/services/networking.scm       wpa-supplicant-service-type
+gnu/services/networking.scm       hostapd-service-type
+gnu/services/networking.scm       simulated-wifi-service-type
+gnu/services/networking.scm       openvswitch-service-type
+gnu/services/networking.scm       iptables-service-type
+gnu/services/networking.scm       nftables-service-type
+gnu/services/networking.scm       pagekite-service-type
+gnu/services/networking.scm       yggdrasil-service-type
+gnu/services/getmail.scm          getmail-service-type
+gnu/services/dns.scm              knot-service-type
+gnu/services/dns.scm              knot-resolver-service-type
+gnu/services/dns.scm              dnsmasq-service-type
+gnu/services/dns.scm              ddclient-service-type
+gnu/services/avahi.scm            avahi-service-type
+gnu/services/spice.scm            spice-vdagent-service-type
+guix/scripts/publish.scm          publish-service-type
+#+end_src
+** memo-201129235006: How to build your own package?
+*** Synopsis
+I am still struggling to make my own package. I was about to pack [[https://github.com/dimitri/pgloader][pgloader]] so let keep some note
+here on how to build and trouble shoot packaging in *Guix*. I started with preparing dependencies
+tree for mising package(s) for ~pgloader~ one of the missing packages was ~cl-log~ making package of
+which I used as an example here.
+
+*** Require
+- Internet access
+- Installed ~git~
+- Running Guix OS or package manager
+
+*** Actions
+Clone source of desired project and check the ~base32~ hash sum of the version tag or commit from
+which you'd like to build a package. Authors of projects not always keep their open sourced code in
+good "production ready" condition and not always tag the releases, in this case just use ~git~
+commit.
+
+I have faced countless hiccups during package build, so here is a short check list you need to know
+before start making new package for yourself or for preparing patch to upstream to share with
+community.
+
+1. How source code could be obtained?
+   - controlled by ~source~ and ~origin~ objects
+   - method ~url-fetch~, downloads archive
+   - method ~git-fetch~, invokes ~git pull~ with fallowing check of recursive hash and VCS files
+     excluded
+2. How to get right hash of obtained source code which was cloned with ~git~?
+   - ~guix hash --recursive --exclude-vcs <path/to/source/directory>~
+3. How to cognize which Guile modules could be required for the build process?
+   - most of the time it's trial and error method, ~guix~ complains if something is missing and
+     points on the required module.
+   - in some edge cases when the package does not require dependencies it's enough (CommonLisp
+     example) this set of modules:
+     #+begin_src scheme
+     (use-modules (guix build-system asdf)
+                  (guix packages)
+                  (guix download)
+                  (guix utils)
+                  (guix git-download)
+                  ((guix licenses) #:prefix license:)
+                  (gnu packages lisp)
+                  (gnu packages lisp-xyz))
+     #+end_src
+     Adjust ~(guix build-system asdf)~, ~(gnu packages lisp)~ and ~(gnu packages lisp-xyz)~
+
+
+Here is an example how to make a package of Common Lisp project ~cl-log~
+#+begin_src sh
+git clone https://github.com/nicklevine/cl-log
+guix hash --exclude-vcs --recursive cl-log
+1r3z9swy1b59swvaa5b97is9ysrfmjvjjhhw56p7p5hqg93b92ak
+# save package definition to cl-log.scm file
+guix build --file=cl-log.scm --debug=5
+#+end_src
+
+/cl-log.scm/
+#+begin_src scheme
+(use-modules (guix build-system asdf)
+             (guix packages)
+             (guix download)
+             (guix utils)
+             (guix git-download)
+             ((guix licenses) #:prefix license:)
+             (gnu packages lisp)
+             (gnu packages lisp-xyz))
+
+  (package
+   (name "cl-log")
+   (version "1.0.1")
+   (source
+    (origin
+     (method git-fetch)
+     (uri (git-reference
+           (url "https://github.com/nicklevine/cl-log")
+           (commit "8f4b766d51e02245c310526cf1e4534ce634f837")))
+     (sha256
+      (base32 "1r3z9swy1b59swvaa5b97is9ysrfmjvjjhhw56p7p5hqg93b92ak"))
+     (file-name (git-file-name "cl-log" version))))
+   (build-system asdf-build-system/sbcl)
+   (synopsis "Common Lisp general purpose logging utility")
+   (description "CL-LOG is a general purpose logging utility, loosely modelled
+in some respects after Gary King's Log5. Its features include: logging to
+several destinations at once, via \"messengers\", each messenger is tailored to
+accept some log messages and reject others, and this tailoring can be changed
+on-the-fly, very rapid processing of messages which are rejected by all
+messengers, fully independent use of the utility by several different
+sub-systems in an application, support for messengers which cl:format text to a
+stream, support for messengers which do not invoke cl:format, timestamps in
+theory accurate to internal-time-units-per-second.")
+   (home-page "https://github.com/nicklevine/cl-log")
+   (license license:expat))
+#+end_src
+*** References
+- https://guix.gnu.org/manual/en/html_node/Build-Systems.html
+- https://guix.gnu.org/manual/en/html_node/Defining-Packages.html
+- https://guix.gnu.org/manual/en/html_node/Package-Modules.html
+- https://guix.gnu.org/manual/en/html_node/package-Reference.html
+- https://gitlab.com/pjotrp/guix-notes/-/blob/master/HACKING.org
+
+* Glossary
+- <<<package>>>
+- <<<module>>>
+- <<<profile>>>
+- <<<derivation>>>
+- <<<generation>>>
+
+
+* References
+- 8.15 Running Guix in a Virtual Machine
+  https://guix.gnu.org/manual/en/html_node/Running-Guix-in-a-VM.html
+- https://www.gnu.org/software/guile/
+- 8 System Configuration
+  https://guix.gnu.org/manual/en/guix.html#System-Configuration
+- https://gitlab.com/pjotrp/guix-notes
+- https://github.com/alezost/guix-config

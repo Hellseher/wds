@@ -1,12 +1,12 @@
-# File      : notes.org
+# File      : memo.org
 # Created   : <2020-01-12 Sun 21:22:32 GMT>
-# Modified  : <2020-02-15 Sat 09:58:36 GMT> Sharlatan
-# Author    : Sharlatan
+# Modified  : <2020-02-15 Sat 09:58:36 GMT> #Rλatan
+# Author    : #Rλatan
 # Synopsis  : <>
 
 * Timeline
 
-** Q-200112222429: How to load ASDF ready system to your fresh image?
+** memo-200112222429: How to load ASDF ready system to your fresh image?
 *** Synopsis
 The easiest way is to perform it via Quicklisp package
 manager and Emacs's SLIME package if you are not using systems like GUIX.
@@ -69,7 +69,7 @@ dependencies specified in the
 If you manage all dependencies yourself =asdf= starts loading your
 ~ASDF_SOURCE_REGISTRY/PROJECT_NAME/file.asd~
 
-** Q-200201000044: What are the default packages of SBCL?
+** memo-200201000044: What are the default packages of SBCL?
 *** Synopsis
 I needed to compare bare installations of SBCL of the same versions on
 few machines. There was Guix and Fedora 31.
@@ -126,9 +126,96 @@ non-interacting it's a good combination with *nix CLI tools.
 #<PACKAGE "SB-X86-64-ASM">
 #+END_SRC
 
+** memo-201128002650: How to interact with external commands and process?
+*** Synopsis
+I was faced with a task which involed interaction with external program (project
+based on Python 3.8 ~subprocess~ module) and wanted to find out how it's
+implemented in CL. There is a good articale in [[https://lispcookbook.github.io/cl-cookbook/os.html#running-external-programs][Cookbook]] to start from
 
+Interaction with OS is implementation specific task but in some cases you may
+need just ~uoip~ which comes with ASDF
+
+*** Require
++ Installed SBCL
++ Installed ~uoip~ part of [[https://gitlab.common-lisp.net/asdf/asdf][ASDF]]
+*** Actions
+With ~uoip:run-program~ and ~uoip:launch-program~ you can evaluate command
+synchronously or asynchronously by deafault it tries to run program in subshell.
+
+#+begin_example
+CL-USER> (uiop:run-program "date" :output *standard-output*)
+Sat 28 Nov 01:00:34 GMT 2020
+NIL
+NIL
+0 (0 bits, #x0, #o0, #b0)
+#+end_example
+
+You also can capture output of the run program:
+#+begin_example
+CL-USER> (defparameter *cmd-date* (uiop:run-program "date" :output :string))
+*CMD-DATE*
+CL-USER> *cmd-date*
+"Sat 28 Nov 01:08:48 GMT 2020
+"
+#+end_example
+
+#+begin_example
+CL-USER> (defparameter *cmd-date* (uiop:run-program "date" :output '(:string :stripped t)))
+*CMD-DATE*
+CL-USER> *cmd-date*
+"Sat 28 Nov 01:12:35 GMT 2020"
+#+end_example
+
+** memo-201129203258: How to access SQL Database?
+*** Synopsis
+I need to acces Sqlite[3] database from List image, so which system to use and which of them is
+activaly supported (at list 2-3 updates per 3 monthes).
+*** Require
+- SBCL
+- Slime
+- Quicklisp or Guix
+*** Actions
+
+#+begin_src sh
+touch  memo-201129203258.db
+#+end_src
+
+#+RESULTS:
+#+begin_src lisp
+(ql:quickload :cl-dbi)
+
+(defparameter *connection*
+  (dbi:connect :sqlite3
+               :database-name #P"./dbi.db"))
+
+(let* ((query (dbi:prepare *connection*
+                           "CREATE TABLE IF NOT EXISTS
+test_table (id int(10), name char(50))")))
+  (dbi:execute query))
+
+(let* ((query (dbi:prepare *connection*
+                           "CREATE TABLE IF NOT EXISTS
+ test_table_2 (id int(10), name char(50))")))
+  (dbi:execute query))
+
+(let* ((query (dbi:prepare *connection*
+                           "SELECT * FROM sqlite_master
+WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY 1"))
+       (query (dbi:execute query)))
+  (loop :for row = (dbi:fetch query)
+        :while row
+        :do (format t "~A~%" row)))
+
+(dbi:do-sql *connection* "INSERT INTO test_table (id) VALUES (1)")
+
+(dbi:disconnect *connection*)
+#+end_src
+
+#+RESULTS:
+: #<SQLITE:SQLITE-HANDLE {10059BC683}>
 
 * Glossary
 - <<<image>>>
 - <<<system>>>
-# End of notes.org
+
+# End of memo.org
