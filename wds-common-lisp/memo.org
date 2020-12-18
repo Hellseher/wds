@@ -232,25 +232,29 @@ finishs longest of them (shortes?)
 #+end_example
 
 
-#+begin_src lisp :results replace raw
+#+begin_src lisp :results replace raw :wrap EXPORT markdown
 (loop
   :as i :upto 10
   :collect i)
 #+end_src
 
 #+RESULTS:
+#+begin_EXPORT markdown
 (0 1 2 3 4 5 6 7 8 9 10)
+#+end_EXPORT
 
-#+begin_src lisp :results replace raw
+#+begin_src lisp :results replace raw :wrap EXPORT markdown
 (loop
   :for i :upto 10
   :collect i)
 #+end_src
 
 #+RESULTS:
+#+begin_EXPORT markdown
 (0 1 2 3 4 5 6 7 8 9 10)
+#+end_EXPORT
 
-#+begin_src lisp :results replace raw
+#+begin_src lisp :results replace raw :wrap EXPORT markdown
 (loop
   :for i :upto 10
   :for j := (* i i)
@@ -258,9 +262,11 @@ finishs longest of them (shortes?)
 #+end_src
 
 #+RESULTS:
+#+begin_EXPORT markdown
 ((0 0) (1 1) (2 4) (3 9) (4 16) (5 25) (6 36) (7 49) (8 64) (9 81) (10 100))
+#+end_EXPORT
 
-#+begin_src lisp :results replace raw
+#+begin_src lisp :results replace raw :wrap EXPORT markdown
 (loop
   :for i :upto 10
   :for j := (* i i)
@@ -269,62 +275,76 @@ finishs longest of them (shortes?)
 #+end_src
 
 #+RESULTS:
+#+begin_EXPORT markdown
 ((0 0 0) (1 1 1) (2 4 16) (3 9 81) (4 16 256) (5 25 625) (6 36 1296)
  (7 49 2401) (8 64 4096) (9 81 6561) (10 100 10000))
+#+end_EXPORT
 
-#+begin_src lisp :results replace raw
+#+begin_src lisp :results replace raw :wrap EXPORT markdown
 (loop
   :for i :from 0 :downto -10
   :collect i)
 #+end_src
 
 #+RESULTS:
+#+begin_EXPORT markdown
 (0 -1 -2 -3 -4 -5 -6 -7 -8 -9 -10)
+#+end_EXPORT
 
-#+begin_src lisp :results replace raw
+#+begin_src lisp :results replace raw :wrap EXPORT markdown
 (loop
   :for i :from 10 :to 20
   :collect i)
 #+end_src
 
 #+RESULTS:
+#+begin_EXPORT markdown
 (10 11 12 13 14 15 16 17 18 19 20)
+#+end_EXPORT
 
-#+begin_src lisp :results replace raw
+#+begin_src lisp :results replace raw :wrap EXPORT markdown
 (loop
   :for i :from 20 :to 10
   :collect i)
 #+end_src
 
 #+RESULTS:
+#+begin_EXPORT markdown
 NIL
+#+end_EXPORT
 
-#+begin_src lisp :results replace raw
+#+begin_src lisp :results replace raw :wrap EXPORT markdown
 (loop
   :for i :from 20 :downto 10
   :collect i)
 #+end_src
 
 #+RESULTS:
+#+begin_EXPORT markdown
 (20 19 18 17 16 15 14 13 12 11 10)
+#+end_EXPORT
 
-#+begin_src lisp :results replace raw
+#+begin_src lisp :results replace raw :wrap EXPORT markdown
 (loop
   :for i :downfrom 20 :to 10
   :collect i)
 #+end_src
 
 #+RESULTS:
+#+begin_EXPORT markdown
 (20 19 18 17 16 15 14 13 12 11 10)
+#+end_EXPORT
 
-#+begin_src lisp :results replace raw
+#+begin_src lisp :results replace raw :wrap EXPORT markdown
 (loop
   :repeat 10
   :do (print "hello world"))
 #+end_src
 
 #+RESULTS:
+#+begin_EXPORT markdown
 NIL
+#+end_EXPORT
 
 Looping over collections
 
@@ -332,14 +352,16 @@ Looping over collections
 
 : (loop :for var :in list-form)
 
-#+begin_src lisp :results replace raw
+#+begin_src lisp :results replace raw :wrap EXPORT markdown
 (loop
   :for i :in (list 1 2 3 4 5 6 7 8 9)
   :collect (* i 2))
 #+end_src
 
 #+RESULTS:
+#+begin_EXPORT markdown
 (2 4 6 8 10 12 14 16 18)
+#+end_EXPORT
 
 * Glossary
 - <<<image>>>
