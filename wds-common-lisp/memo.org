@@ -211,12 +211,11 @@ WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY 1"))
 (dbi:disconnect *connection*)
 #+end_src
 
-#+RESULTS:
-: #<SQLITE:SQLITE-HANDLE {10059BC683}>
 ** memo-201217151645: Was für ein Biest dieser LOOP ist
 *** Synopsis
 LOOP is a macro so what's I may solve and how tiht it..., I've tried so many times to dig deeper
 toundestand how it build elegant loops, so let's considered as other round.
+
 *** Require
 
 *** Actions
