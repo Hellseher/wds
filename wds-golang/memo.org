@@ -1,0 +1,102 @@
+# File      : memo.org
+# Created   : <2020-12-29 Tue 20:04:33 GMT>
+# Modified  : <2020-12-29 Tue 21:12:40 GMT>
+# Author    : #Rλatan <abc@incerto.xyz>
+# Synopsis  : <>
+
+#+title: Go, Golang
+* Synopsis
+All about Go programming language, some ignorant man thoughts.
+
+* Timeline
+** memo-201229200841: How to compile just one source file.go?
+*** Synopsis
+It slaped to my face when I tried to compile one file of my banch of hacks - compiler compleind on:
+
+#+begin_example
+go run .
+# _/mnt/library/projects/hck/Go
+./listen.go:12:6: main redeclared in this block
+	previous declaration at ./array.go:7:6
+#+end_example
+
+#+begin_example
+go build .
+# _/home/Sharlatan/Projects/hck/Go
+./listen.go:12:6: main redeclared in this block
+        previous declaration at ./array.go:7:6
+#+end_example
+
+/array.go/
+#+begin_src go
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	var a1 [10]int
+	a2 := [...]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+	fmt.Println(a1)
+	fmt.Println(a2)
+}
+#+end_src
+
+/listen.go/
+#+begin_src go
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hi there!")
+}
+
+func main() {
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":8181", nil)
+}
+#+end_src
+
+*** Require
+- configured ~go~ compiler
+
+*** Actions
+
+Core template of Golang source file,
+
+#+begin_src go
+package PACKAGE_NAME
+
+import {
+	"fmt"
+	// ...
+	// BANCH_OF_MODULES
+	// ...
+}
+
+func main() {
+	f1()
+	f2()
+}
+
+func f1() {
+}
+
+func f1() {
+}
+
+// ... more functions
+#+end_src
+
+It looks like it is strict to have ~PACKAGE_NAME~ with ~main()~ function which is an entrypoint
+of the programm. ~package~ clause was inspired by Lisp definetly (?!) as it's not a module which is
+imported with ~import~ clause.
+
+* Glossary
+* References
