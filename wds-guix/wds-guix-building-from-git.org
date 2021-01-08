@@ -1,7 +1,7 @@
 # File      : building_from_git.org
 # Created   : <2019-08-07 Wed 23:00:37 BST>
 # Modified  : <2020-4-13 Mon 20:24:49 BST>
-# Author    : Sharlatan
+# Author    : #Rλatan
 # Synopsis  : <>
 
 #+TITLE: Building Guix and contributing to packages
@@ -14,7 +14,7 @@ Step by step
 
 * First
 
-The documentation sucks as usually! (c) Sharlatan
+The documentation sucks as usually! (c) #Rλatan
 
 As described in [[https://guix.gnu.org/manual/en/html_node/Building-from-Git.html#Building-from-Git][14.1 Building from Git]] you can start from creating
 build environment and linking all required dependencies to it first to

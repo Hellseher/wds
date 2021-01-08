@@ -1,6 +1,6 @@
 # File     : wds-devops-notes.org
 # Created  : <2020-5-11 Mon 15:44:53 BST>
-# Modified : <2020-5-17 Sun 16:50:17 BST>
+# Modified : <2020-6-26 Fri 14:37:01 BST>
 # Author   : #Rλatan
 # Synopsis : <>
 
@@ -10,7 +10,18 @@
   - arhive: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
   - sig: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip.sig
 * Services and Technologies
-** Open-source in-house clustering/virtualization solutions
+** Open-source
+/in-house clustering, virtualization, container solutions/
+
+- Apache Cassandra :: 2008 https://cassandra.apache.org/ is a free and
+  open-source, distributed, wide column store, NoSQL database management system
+  designed to handle large amounts of data across many commodity servers,
+  providing high availability with no single point of failure: =db=
+- Ceph :: 2012 https://ceph.io/ is an open-source software storage platform,
+  implements object storage on a single distributed computer cluster, and
+  provides 3in1 interfaces for : object-, block- and file-level storage. Ceph
+  aims primarily for completely distributed operation without a single point of
+  failure, scalable to the exabyte level, and freely available: =storage=
 - Minikube :: https://minikube.sigs.k8s.io/docs/ Run Kubernetes locally
 - ProxmoxVE :: 2008 https://www.proxmox.com/ Proxmox VE is a complete
   open-source platform for all-inclusive enterprise virtualization that tightly
@@ -18,21 +29,14 @@
   networking functionality on a single platform, and easily manages high
   availability clusters and disaster recovery tools with the built-in web
   management interface.
-- Ceph :: 2012 *storage* https://ceph.io/ is an open-source software storage
-  platform, implements object storage on a single distributed computer cluster,
-  and provides 3in1 interfaces for : object-, block- and file-level storage.
-  Ceph aims primarily for completely distributed operation without a single
-  point of failure, scalable to the exabyte level, and freely available.
-- Apache Cassandra :: 2008 *db* https://cassandra.apache.org/ is a free and
-  open-source, distributed, wide column store, NoSQL database management system
-  designed to handle large amounts of data across many commodity servers,
-  providing high availability with no single point of failure.
+
 ** Cloud providers
-- Pagerduty :: 2009 https://www.pagerduty.com/
-- Amazone Web Services :: 2006 https://aws.amazon.com/
-- Microsoft Azure :: 2010 https://azure.microsoft.com/
-- Google Cloud :: 2008 https://cloud.google.com
+- Amazon Web Services :: 2006 https://aws.amazon.com/
 - DigitalOcean :: 2011 https://www.digitalocean.com/
+- Google Cloud :: 2008 https://cloud.google.com
+- Microsoft Azure :: 2010 https://azure.microsoft.com/
+- Pagerduty :: 2009 https://www.pagerduty.com/
+
 ** Cloud technologies
 - AWS
   - AWS EC2 :: *compute* https://aws.amazon.com/ec2/
@@ -51,16 +55,47 @@
   - AWS CloudFormation ::
   - AWS CloudWatch :: *management*
   - AWS QLDB :: *db* https://aws.amazon.com/qldb/
-** Version Control Systems
-- GitHub :: git based vcs web services
-** Continuous Integration
-- GitHub Actions :: https://github.com/features/actions
-- CircleCI :: https://circleci.com
+
 ** Containers
-- Docker :: *container* https://www.docker.com/
+- Docker :: 2013 https://www.docker.com/
 - HashiCorp Packer :: https://www.packer.io/ creating machine Images
-- Kubernetes :: https://kubernetes.io/ is an open-source system for automating
-  deployment, scaling, and management of containerized applications
+- Kubernetes :: 2014 https://kubernetes.io/ is an open-source system for
+  automating deployment, scaling, and management of containerized applications
+- Helm :: https://helm.sh/ k8s package management tool
+
+** Networking
+- Calico :: 2016 https://projectcalico.org/ L3 cloud native networking and
+  network security
+- MegaLB :: https://metallb.universe.tf/ is a load-balancer implementation for
+  bare metal k8s clusters, using standard routing protocols.
+
+** Authentication and security
+- Gravitational Teleport :: https://gravitational.com/teleport/ Implement zero
+  trust security for cloud applications and infrastructure, meet compliance
+  requirements, and have complete visibility into access and behavior.
+- HashiCorp Vault :: https://www.vaultproject.io/ Secure, store and tightly
+  control access to tokens, passwords, certificates, encryption keys for
+  protecting secrets and other sensitive data using a UI, CLI, or HTTP API.
+** Monitoring
+/alerting, graphing, metrics/
+- Prometheus :: 2012 https://prometheus.io/ monitoring system with a dimensional
+  data model: =metric= =alerting=
+- DataDog :: 2010 https://www.datadoghq.com/ is a monitoring service for
+  cloud-scale applications, providing monitoring of servers, databases, tools,
+  and services, through a SaaS-based data analytics platform: =monitoring=
+- Grafana :: 2014 https://grafana.com/ is a multi-platform open
+  source solution for running data analytics, pulling up metrics that make sense
+  of the massive amount of data, and monitoring apps through customizable
+  dashboards: =alerting= =graphing=
+- Netdata :: 2013 https://www.netdata.cloud/ is an open source tool to visualize
+  and monitor real-time metrics, optimized to accumulate all types of data, such
+  as CPU usage, disk activity, SQL queries, visits to a website, etc: =metric=
+  =monitoring=
+- Loki :: https://grafana.com/oss/loki/ Loki is a horizontally-scalable,
+  highly-available, multi-tenant log aggregation system inspired by Prometheus.
+  It is designed to be very cost effective and easy to operate. It does not
+  index the contents of the logs, but rather a set of labels for each log
+  stream.
 ** Language stack
 - Python :: https://www.python.org/
 - Google Go :: https://golang.org
@@ -69,35 +104,24 @@
   configuration language authored by HashiCorp
 - Bash :: *shell* https://www.gnu.org/software/bash/
 - HashiCorp Consul :: https://www.consul.io/
-** Authentication and security
-- Gravitational Teleport :: https://gravitational.com/teleport/ Implement zero
-  trust security for cloud applications and infrastructure, meet compliance
-  requirements, and have complete visibility into access and behavior.
-- HashiCorp Vault :: https://www.vaultproject.io/ Secure, store and tightly
-  control access to tokens, passwords, certificates, encryption keys for
-  protecting secrets and other sensitive data using a UI, CLI, or HTTP API.
-** Monitoring, alerting, graphing
-- Prometheus :: *alerting* https://prometheus.io/ monitoring system with a
-  dimensional data model
-- Grafana :: *alerting* *graphing*  https://grafana.com/
-- Netdata :: *monitoring* https://www.netdata.cloud/
-- Loki :: https://grafana.com/oss/loki/ Loki is a horizontally-scalable,
-  highly-available, multi-tenant log aggregation system inspired by Prometheus.
-  It is designed to be very cost effective and easy to operate. It does not
-  index the contents of the logs, but rather a set of labels for each log
-  stream.
+** Continuous Integration
+- GitHub Actions :: https://github.com/features/actions
+- CircleCI :: https://circleci.com
+** Version Control Systems
+- GitHub :: git based vcs web services
+** Infrastructure Management
+- HashiCorp Terraform Cloud :: https://app.terraform.io/session
+- Pulumi :: https://www.pulumi.com/
+** Configuration Management
+- Ansible :: 2012 https://www.ansible.com/
+** Mobile Device Management
+- Jamf :: https://www.jamf.com/ Apple devices management
 ** Misc
 - Heritrix :: https://github.com/internetarchive/heritrix3 old school web
   crawler
 - PyWB :: https://pypi.org/project/pywb/Core Python Web Archiving Toolkit for
   replay and recording of web archives
 - Serverless Framework :: https://www.serverless.com/
-** Infrastructure/Software management
-- HashiCorp Terraform Cloud :: *IaC* https://app.terraform.io/session
-- Pulumi :: *IaC* https://www.pulumi.com/
-** Mobile Device Management
-- Jamf :: https://www.jamf.com/ Apple devices management
-
 * Glossary
 - <<<git>>> :: destributed VCS
 - <<<VCS>>> :: /Version Control System/
@@ -107,3 +131,7 @@
 - <<<container>>> ::
 - <<<machine image>>> ::
 - <<<IaC>>> :: /Inffrastructure as Code/
+- <<<k2s>>> :: https://k3s.io/
+- <<<k8s>>> :: /Kubernetes/ https://kubernetes.io
+- <<<scaling>>> ::
+- <<<deployment>>> ::

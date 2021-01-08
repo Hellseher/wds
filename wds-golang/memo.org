@@ -1,6 +1,6 @@
 # File      : memo.org
 # Created   : <2020-12-29 Tue 20:04:33 GMT>
-# Modified  : <2020-12-29 Tue 21:12:40 GMT>
+# Modified  : <2020-12-30 Wed 09:45:03 GMT>
 # Author    : #Rλatan <abc@incerto.xyz>
 # Synopsis  : <>
 
@@ -94,8 +94,8 @@ func f1() {
 // ... more functions
 #+end_src
 
-It looks like it is strict to have ~PACKAGE_NAME~ with ~main()~ function which is an entrypoint
-of the programm. ~package~ clause was inspired by Lisp definetly (?!) as it's not a module which is
+It looks like it is strict to have ~PACKAGE_NAME~ with ~main()~ function which is an entrypoint of
+the programm. ~package~ clause was inspired by Lisp definetly (?!) as it's not a module which is
 imported with ~import~ clause.
 
 * Glossary

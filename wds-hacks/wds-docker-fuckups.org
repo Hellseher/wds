@@ -1,7 +1,7 @@
 # File      : wds-docker-fuckups.org
 # Created   : <2018-10-02 Tue 21:26:22 BST>
-# Modified  : <2018-10-03 Wed 00:26:37 BST> Sharlatan
-# Author    : Sharlatan
+# Modified  : <2018-10-03 Wed 00:26:37 BST> #Rλatan
+# Author    : #Rλatan
 # Synopsis  : <Long way of "play" with docker...>
 
 #+OPTIONS: toc:nil num:nil
@@ -126,12 +126,12 @@ Now try to download and install it
 
 #+RESULTS:
 #+BEGIN_SRC org
-/home/Sharlatan/Data/sft/src/awx
+/home/#Rλatan/Data/sft/src/awx
 #+END_SRC
 
 And finnaly run it under ~sudo~:
 #+BEGIN_SRC sh :dir /sudo:: :results value org replace :exports both
-  AWX_PATH="/home/Sharlatan/Data/sft/src/awx"
+  AWX_PATH="/home/#Rλatan/Data/sft/src/awx"
   cd "${AWX_PATH}"
   docker-compose up -d &>/dev/null && docker -D info | head -n6 | column -t -s: 
 #+END_SRC

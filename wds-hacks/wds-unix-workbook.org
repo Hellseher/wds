@@ -1,8 +1,8 @@
 # File          : wds-unix-workbook.org
 # Created       : Tue 18 Oct 2016 22:12:42
-# Last Modified : <2016-11-06 Sun 00:36:03 GMT> sharlatan
-# Author        : sharlatan <sharlatanus@gmail.com>
-# Maintainer    : sharlatan
+# Last Modified : <2016-11-06 Sun 00:36:03 GMT> #Rλatan
+# Author        : #Rλatan <#Rλatanus@gmail.com>
+# Maintainer    : #Rλatan
 # Short         : Real life task of Unixoid.
 
 

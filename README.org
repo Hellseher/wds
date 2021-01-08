@@ -1,7 +1,7 @@
 # File      : README.org
-# Author    : Sharlatan <sharlatanus@gmail.com>
 # Created   : <2016-09-10 Sat 20:45>
-# Modified  : <2020-1-19 Sun 13:44:50 GMT> Sharlatan
+# Modified  : <2020-5-11 Mon 15:17:31 BST>
+# Author    : #Rλatan
 
 * Weg des Schwertes
 /剣の道/
@@ -14,6 +14,8 @@ The sentimental.
 -- Boris Pasternak
 #+END_QUOTE
 
+This repositories contains all my learning curves and paths I deal with during
+my hobby or work time.
 * Project structure
 
 #+BEGIN_SRC sh :results value org :results output replace :exports results
@@ -36,11 +38,10 @@ wds
 │       ├── sh-mode
 │       └── yaml-mode
 ├── wds-guix
-│   └── packages
 ├── wds-hacks
 └── wds-python
 
-14 directories
+13 directories
 #+end_src
 
 Repository of my IT way of config/set up/hacks.

@@ -180,8 +180,7 @@ activaly supported (at list 2-3 updates per 3 monthes).
 touch  memo-201129203258.db
 #+end_src
 
-#+RESULTS:
-#+begin_src lisp
+#+begin_src lisp :results replace raw :wrap EXPORT markdown :exports both
 (ql:quickload :cl-dbi)
 
 (defparameter *connection*
@@ -215,19 +214,43 @@ WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY 1"))
 *** Synopsis
 LOOP is a macro so what's I may solve and how tiht it..., I've tried so many times to dig deeper
 toundestand how it build elegant loops, so let's considered as other round.
-
 *** Require
-
 *** Actions
+Variable Initialization and stepping clauses, they provide iteration control
+
+~:for~ ~:as~
+~:with~
+~:repeat~
+~:and~
+
+#+begin_src lisp
+(loop :for var ...)
+(loop :as var ...)
+(loop :with var ...)
+#+end_src
+
 ~LOOP~ may have as many ~:for~ or ~:as~ clouse as you need, iteration will stop as soon as it
 finishs longest of them (shortes?)
+
+#+begin_src lisp :results replace raw :exports both
+(loop
+  :for (a b) :in '((1 2 3) (4 5 6) (7 8 9))
+  :append (list a b) :into result
+  :finally (return result))
+#+end_src
+
+#+RESULTS:
+(1 2 4 5 7 8)
+
+#+begin_src lisp :results replace raw :exports both
+#+end_src
 
 ~:to~ ~:upto~ ~:below~ ~:downto~ ~:above~ ~:downfrom~
 
 #+begin_example
-(loop :for var :from start-number :to end-numver ...)
-(loop :for var :from start-number :upto end-numver ...)
-(loop :for var :downfrom start-number :to end-numver ...)
+(loop :for var :from start-number :to end-number ...)
+(loop :for var :from start-number :upto end-number ...)
+(loop :for var :downfrom start-number :to end-number ...)
 #+end_example
 
 
@@ -345,11 +368,20 @@ NIL
 NIL
 #+end_EXPORT
 
-Looping over collections
+Looping over collections (list, string, array, hash table, package)
 
-~:in~
+~:in~ ~:on~ ~:by~
+~:across~
+~:being~ ~:the~ ~:each~ ~:of~ ~:using~
 
-: (loop :for var :in list-form)
+#+begin_example
+(loop :for var :in list-form)
+(loop :for var :on list-form ...)
+(loop :for var :on list-form :by #'any-list-function ...)
+(loop :for var :accross "string" ...)
+(loop :for var :accross #(bit-vector) ...)
+(loop :for var :being :the things :in hash-or-package ...)
+#+end_example
 
 #+begin_src lisp :results replace raw :wrap EXPORT markdown :exports both
 (loop
@@ -361,6 +393,142 @@ Looping over collections
 #+begin_EXPORT markdown
 (2 4 6 8 10 12 14 16 18)
 #+end_EXPORT
+
+#+begin_src lisp :results replace raw :wrap EXPORT markdown :exports both
+(loop
+  :for i :on (list 1 2 3 4 5 6 7 8 9)
+  :collect i)
+#+end_src
+
+#+begin_src lisp :results replace raw :wrap EXPORT markdown :exports both
+(loop
+  :for i :on (list 1 2 3 4 5 6 7 8 9) by #'cddr
+  :collect i)
+#+end_src
+
+#+RESULTS:
+#+begin_EXPORT markdown
+((1 2 3 4 5 6 7 8 9) (3 4 5 6 7 8 9) (5 6 7 8 9) (7 8 9) (9))
+#+end_EXPORT
+
+#+begin_src lisp :results replace raw :wrap EXPORT markdown :exports both
+(loop
+  :for i :across "hello world"
+  :collect i)
+#+end_src
+
+#+RESULTS:
+#+begin_EXPORT markdown
+(#\h #\e #\l #\l #\o #\  #\w #\o #\r #\l #\d)
+#+end_EXPORT
+
+#+begin_src lisp :results replace raw :wrap EXPORT markdown :exports both
+(loop
+  :for i :across #(h e l l o w o r l d)
+  :collect i)
+#+end_src
+
+#+RESULTS:
+#+begin_EXPORT markdown
+(H E L L O W O R L D)
+#+end_EXPORT
+
+Local variable
+~:with~
+#+begin_src lisp :results replace raw :exports both
+(loop
+  :for i :from 1 :to 10
+  :with j := (* i 2)
+  :collect j)
+#+end_src
+
+#+RESULTS:
+(2 2 2 2 2 2 2 2 2 2)
+
+#+begin_src lisp :results replace output :exports both
+(loop
+      :for (item . rest) :on (list 1 2 3 4 5 6 7 8 9 10)
+      :do (format t "~a" item)
+      :when rest :do (format t ", "))
+#+end_src
+
+#+RESULTS:
+: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+
+Value accumulation
+
+~:collect~ ~:append~ ~:nconc~ ~:count~ ~:sum~ ~:maximize~ ~:minimize~
+~:collecting~ ~:appending~ ~:nconcing~ ~:counting~ ~:summing~ ~:maximizing~ ~:minimizing~
+~:into~
+~:finally~
+
+#+begin_src lisp :results replace output raw :exports both
+(defparameter *random* (loop :repeat 100 :collect (random 10000)))
+
+(defparameter example
+  (loop
+    :for i :in *random*
+    :count (evenp i) :into evens
+    :count (oddp i) :into odds
+    :sum i :into total
+    :maximize i :into max
+    :minimize i :into min
+    :finally (return (list min max total evens odds))))
+
+(format t "~a" example)
+#+end_src
+
+#+RESULTS:
+(19 9943 506789 51 49)
+
+Uncoditional Execution
+
+~:do~
+~:doing~
+~:return~ ~:return-from~
+
+#+begin_src lisp :results replace output :exports both
+(loop
+  :for i :from 1 :to 10
+  :do (print i))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+#+end_example
+
+#+begin_src lisp :results replace raw output :exports both
+(block outer
+  (loop :for i :from 0 :return 100)
+  (print "will be skipped")
+  200)
+#+end_src
+
+#+RESULTS:
+
+Conditional Execution
+
+~:if~ ~:when~ ~:unless~
+~:else~
+~:initially~ ~:finally~
+
+#+begin_src lisp :results replace raw :exports both
+(loop :for i :from 1 :to 10 :when (evenp i) :sum i)
+#+end_src
+
+#+RESULTS:
+30 (5 bits, #x1E, #o36, #b11110)
+*** Referances
 
 * Glossary
 - <<<image>>>

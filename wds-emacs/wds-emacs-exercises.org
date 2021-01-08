@@ -1,7 +1,7 @@
 # File          : wds-emacs-execrices.el
 # Created       : Sun 24 Apr 2016 14:02:12
-# Last Modified : <2017-1-25 Wed 23:41:40 GMT> sharlatan
-# Authour       : sharlatan
+# Last Modified : <2017-1-25 Wed 23:41:40 GMT> #Rλatan
+# Authour       : #Rλatan
 # Maintainer(s) :
 
 #+OPTIONS: num:nil

@@ -1,8 +1,8 @@
 # File         : wds-python-for-sysamin.org
 # Created      : Tue 11 Oct 2016 23:24:38
-# Modified     : <2020-01-30 Thu 23:39:49 GMT> Sharlatan
-# Author       : sharlatan <sharlatanus@gmail.com>
-# Maintainer(s : sharlatan
+# Modified     : <2020-01-30 Thu 23:39:49 GMT> #Rλatan
+# Author       : #Rλatan <#Rλatanus@gmail.com>
+# Maintainer(s : #Rλatan
 # Short        : Comparison Python with shell scripting.
 
 #+TITLE: Python for Sysadmins

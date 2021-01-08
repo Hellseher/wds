@@ -1,7 +1,7 @@
 # File           : wds-any-programming-languages-have.org
 # Created        : <2018-08-18 Sat 13:25:49 BST>
-# Last Modified  : <2018-8-18 Sat 15:43:00 BST> Sharlatan
-# Author         : Sharlatan
+# Last Modified  : <2018-8-18 Sat 15:43:00 BST> #Rλatan
+# Author         : #Rλatan
 # Synopsis       :
 
 ** From Sympols to Meaning

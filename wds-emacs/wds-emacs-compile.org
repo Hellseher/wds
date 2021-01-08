@@ -1,8 +1,8 @@
 # File          : wds-emacs-compile.org
 # Created       : Tue 27 Sep 2016 21:27:15
-# Last Modified : Wed 28 Sep 2016 21:37:18 sharlatan
-# Author        : sharlatan <sharlatanus@gmail.com>
-# Maintainer    : sharlatan
+# Last Modified : Wed 28 Sep 2016 21:37:18 #Rλatan
+# Author        : #Rλatan <#Rλatanus@gmail.com>
+# Maintainer    : #Rλatan
 # Short         : Emacs compiling tips.
 
 * RPM family
@@ -17,10 +17,10 @@ list of lib*.rpm packages installed on my machine in ~lib_devel_fedora_rpm~
 file and complete list of *-devel pacages in ~all_devel_fedora_rpm~
 
 #+BEGIN_SRC sh
-[ sharlatan@base201215.ws ]:$ uname -smr
+[ #Rλatan@base201215.ws ]:$ uname -smr
 Linux 4.7.2-101.fc23.x86_64 x86_64
 
-[ sharlatan@base201215.ws ]:$ sudo rpm -qa \
+[ #Rλatan@base201215.ws ]:$ sudo rpm -qa \
  | grep "devel"  | grep "lib" | grep -oP ".+[a-z](?=-[0-9])" | sort | nl
      1	compat-libuv010-devel
      2	ghc-glib-devel
@@ -98,7 +98,7 @@ Linux 4.7.2-101.fc23.x86_64 x86_64
 
 And after ~./autogen.sh~
 #+BEGIN_SRC sh
-[ sharlatan@base201215.ws ]:$ time ./autogen.sh
+[ #Rλatan@base201215.ws ]:$ time ./autogen.sh
 Checking whether you have the necessary tools...
 (Read INSTALL.REPO for more details on building Emacs)
 
@@ -118,7 +118,7 @@ sys	0m0.395s
 and ~./configure~ you may see this text
 
 #+BEGIN_EXAMPLE
-[ sharlatan@base201215.ws ]:$ time ./configure tim--with-modules --with-cairo --with-x-toolkit=lucid | nl
+[ #Rλatan@base201215.ws ]:$ time ./configure tim--with-modules --with-cairo --with-x-toolkit=lucid | nl
 
 ...
 
@@ -169,9 +169,9 @@ sys	0m8.011s
 
 Time to Compile...
 #+BEGIN_SRC sh
-[ sharlatan@base201215.ws ]:$ time make | nl
+[ #Rλatan@base201215.ws ]:$ time make | nl
      1	make -C lib all
-     2	make[1]: Entering directory '/home/sharlatan/Downloads/emacs-25.1/emacs-25.1/lib'
+     2	make[1]: Entering directory '/home/#Rλatan/Downloads/emacs-25.1/emacs-25.1/lib'
      3	  GEN      alloca.h
      4	  GEN      c++defs.h
      5	  GEN      arg-nonnull.h
@@ -193,7 +193,7 @@ Time to Compile...
 ...
 
    244	  GEN      info/dir
-   245	make[1]: Leaving directory '/home/sharlatan/Downloads/emacs-25.1/emacs-25.1'
+   245	make[1]: Leaving directory '/home/#Rλatan/Downloads/emacs-25.1/emacs-25.1'
 
 
 real	1m23.710s
@@ -203,16 +203,16 @@ sys	0m4.550s
 
 And finnaly install it!
 #+BEGIN_SRC sh
-[ sharlatan@base201215.ws ]:$ time sudo make install | nl
+[ #Rλatan@base201215.ws ]:$ time sudo make install | nl
      1	make -C lib all
-     2	make[1]: Entering directory '/home/sharlatan/Downloads/emacs-25.1/emacs-25.1/lib'
+     2	make[1]: Entering directory '/home/#Rλatan/Downloads/emacs-25.1/emacs-25.1/lib'
      3	make  all-am
 ...
 
   4305	make -C lib-src may-be-blessmail
-  4306	make[1]: Entering directory '/home/sharlatan/Downloads/emacs-25.1/emacs-25.1/lib-src'
+  4306	make[1]: Entering directory '/home/#Rλatan/Downloads/emacs-25.1/emacs-25.1/lib-src'
   4307	make[1]: Nothing to be done for 'maybe-blessmail'.
-  4308	make[1]: Leaving directory '/home/sharlatan/Downloads/emacs-25.1/emacs-25.1/lib-src'
+  4308	make[1]: Leaving directory '/home/#Rλatan/Downloads/emacs-25.1/emacs-25.1/lib-src'
 
 
 real	0m15.930s

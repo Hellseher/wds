@@ -1,8 +1,0 @@
-- install.sh
-  - ansible
-  - vagrant
-  - virtualbox
-    - virtualbox dependency config
-  - generate defaul RSA key
-* Referances
-- https://github.com/leucos/ansible-tuto

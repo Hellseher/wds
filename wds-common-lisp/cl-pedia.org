@@ -1,14 +1,13 @@
 # File     : cl-pedia.org
 # Created  : <2017-01-25 Wed 21:57:00 GMT>
-# Modified : <2020-02-11 Tue 00:48:52 GMT> Sharlatan
-# Author   : sharlatan
+# Modified : <2020-12-29 Tue 13:51:54 GMT>
+# Author   : #Rλatan
 # Synopsis : <>
 
 #+OPTIONS: num:nil
-#+SETUPFILE: theme-bigblow.setup
 
 * Characters
-** Asterics [*]
+** Asterisk [*]
 It is usualy used in definition of global variables.
 
 #+BEGIN_SRC lisp
@@ -26,12 +25,12 @@ CL-USER> (let ((a 'one)
 (ONE TWO THREE)
 #+end_example
 ** Colon [:]
-- keyword :: is a part of optional function parametes
+- keyword :: is a part of optional function parameters
 : package:symbol
 : package::symbol
 It allows to access symbols in other package(s).
 ** Comma [,]
-It used in quasiquoting to enable embanded Lisp code.
+It used in quasiquoting to enable embedded Lisp code.
 
 #+BEGIN_SRC lisp
   (defun describe-path (edge) `(there is a ,(caddr edge) going ,(cadr edge) from
@@ -42,23 +41,23 @@ It used in quasiquoting to enable embanded Lisp code.
 
 ** Conjunction [&]
 Optional arguments to function.
-*** Optimal argumets: &optional
+*** Optimal arguments: &optional
 *** Named parameters: &key
 *** Variable number of arguments: &rest
 *** &allow-other-keys
 ** Dot [.]
-** Pipiline [|]
+** Pipeline [|]
 ** Semicolon [;]
 Start comments, which will be ignored by compiler
-** Sharpsign[#]
+** Sharp-sign[#]
 
 | s. backslash   | # | \ | ~#\X~      | literal character X          |
 | s. quote       | # | ' | ~#'FOO~    |                              |
 | s. dot         | # | . | ~#.FOO~    |                              |
 | s. plus        | # | + | ~#+FOO~    | read-time conditionalization |
 | s. P           | # | P | ~#P""~     | /path/to/location            |
-| s. culon       | # | : | ~#:SYMBOL~ | determine uninterned symbol  |
-| s. minuse      | # | - | ~#-FOO~    | read-time conditionalization |
+| s. colon       | # | : | ~#:SYMBOL~ | determine uninterned symbol  |
+| s. minus       | # | - | ~#-FOO~    | read-time conditionalization |
 | s. parenthesis | # | ( | ~#(FOO)~   | define an array              |
 
 ** Single-quote [']
@@ -72,7 +71,7 @@ Start comments, which will be ignored by compiler
 Find specification of OBJECT or STREAM-DESIGNATOR:
 : CL-USER> (cl:describe describe)
 
-Find all avalable package(s) in current image:
+Find all available package(s) in current image:
 : CL-USER> (cl:list-all-packages)
 
 Get user configuration init path name:
@@ -103,10 +102,14 @@ There is a number of informative global variables:
 | ~cl:*features*~                  |                                       |
 | ~ql:*quicklisp-home*~            |                                       |
 
-* Convension
+* Conversion
+
 Collected from different sources.
-- system deffination :: file name.asdf ~(defsystem "name")~
-* Glosary
+- system deffination :: file name.asdf ~(asdf:defsystem "name")~
+- global variable :: ~*variable*~
+- constant :: ~+variable+~
+* Glossary
+
 - <<<argument>>> :: the information prosented to the function, in Lisp could be
                     atom(s) or list(s).
 - <<<array>>> ::
@@ -262,7 +265,7 @@ find-symbol          package-used-by-list       delete-package
 - <<<variable>>> :: a symbol that has a value
   - /lexical/ *v*
 * Appendix
-** Implimentation
+** Implementation
 | RELEASED | NAME                            | LICENCE    | LINK                          |
 |----------+---------------------------------+------------+-------------------------------|
 |     1999 | *SBCL* /Steel Bank Common Lisp/ | BSD/Public | http://www.sbcl.org/          |
@@ -277,7 +280,7 @@ find-symbol          package-used-by-list       delete-package
 |----------+---------------------------------+------------+-------------------------------|
 ** Standards
 - ANSI standard X3J13 (X3.226-1994), approved December 8, 1994
-** Bebliograpy
+** Bibliography
 - *Why Functional Programmin Metters* by John Hughes
 - Research Topics in Functional Programming” ed. D. Turner, Addison-Wesley, 1990
 ** Links

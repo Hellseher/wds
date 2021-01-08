@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # File     : wds-guix-install.sh
 # Created  : <2017-07-23 Sun 00:40:54 BST>
-# Modified : <2017-8-01 Tue 23:27:57 BST> sharlatan
-# Author   : sharlatan
+# Modified : <2017-8-01 Tue 23:27:57 BST> #Rλatan
+# Author   : #Rλatan
 # Synopsis :
 
 set -e

@@ -1,0 +1,12 @@
+# File           : hall-of-fame.org
+# Created        : <2020-12-12 Sat 21:13:33 GMT>
+# Modified       : <2020-12-12 Sat 21:20:53 GMT>
+# Author         : #Rλatan
+# Maintainer(s)  :
+# Sinopsis       : <>
+
+|   |   | Age |                             | Author     | GitHub  | GitLab |
+|---+---+-----+-----------------------------+------------+---------+--------|
+|   |   |     | Elias Pipping               |            |         |        |
+|   |   |     | Zachary Beane               | Quicklisp  |         |        |
+|   |   |     | Avatar François-René Rideau | ASDF, UOIP | =/fare= |        |

@@ -1,0 +1,36 @@
+# File           : wds-gnu-linux-fedora.org
+# Created        : <2020-10-30 Fri 17:26:23 GMT>
+# Modified       : <2020-11-01 Sun 17:21:08 GMT>
+# Author         : #Rλatan <abc@incerto.xyz>
+
+** Upgrade Fedora vN to vN+1
+#+NAME: fedora-upgrade-release.sh
+#+BEGIN_SRC sh
+#!/usr/bin/env bash
+# File : fedora-uprade-release.sh
+
+if [ $USER != "root" ]
+then
+    echo "Run as root or sudo user. Exit"
+fi
+
+REQUIRE=(
+    grep
+)
+
+chk_fedora()
+{ # Check if we are on Fedora distro
+    echo tf a
+}
+
+
+main()
+{
+    dnf upgrade --refresh
+    dnf install dnf-plugin-system-upgrade
+    dnf system-upgrade download --releasever=33
+    dnf system-upgrade reboot
+}
+main "$@"
+# End
+#+END_SRC

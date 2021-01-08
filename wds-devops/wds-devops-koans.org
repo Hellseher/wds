@@ -1,5 +1,5 @@
 # Created : <2020-1-17 Fri 20:26:32 GMT>
-# Modified : <2020-1-17 Fri 20:33:56 GMT> Sharlatan
+# Modified : <2020-1-17 Fri 20:33:56 GMT> #Rλatan
 
 #+TITLE: Koans
 

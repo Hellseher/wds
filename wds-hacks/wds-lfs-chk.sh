@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # File     : wds-lfs-chk.sh
 # Created  : <2018-6-26 Tue 23:50:52 BST>
-# Modified : <2018-7-07 Sat 01:42:50 BST> Sharlatan
-# Author   : sharlatan
+# Modified : <2018-7-07 Sat 01:42:50 BST> #Rλatan
+# Author   : #Rλatan
 # Synopsis : <Check all requirements for the host to buld LFS>
 
 set -e

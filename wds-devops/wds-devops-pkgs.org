@@ -1,0 +1,45 @@
+# File      : wds-devops-pkgs.org
+# Created   : <2020-07-07 Tue 10:46:24 BST>
+# Modified  : <2020-07-14 Tue 11:30:37 BST>
+# Author    : #Rλatan <abc@incerto.xyz>
+# Synopsis  : <Survey over package managers>
+
+#+TITLE: Package managers and build tool kits
+
+** System/Distribution Specific
+| Name    | Distribution | Released |
+|---------+--------------+----------|
+| apt     |              |          |
+| apt-get |              |          |
+| dpkg    |              |          |
+| rpm     |              |          |
+| yum     |              |          |
+| dnf     |              |          |
+| guix    | Guix         |          |
+|         | Slackware    |          |
+|         | Gentoo       |          |
+| pkg     | FreeBSD      |          |
+| apk     | Alpine       |          |
+|---------+--------------+----------|
+
+** Language Specific
+| Name      | Language(s) | Framework | Author     | Homepage          | Released         |
+|-----------+-------------+-----------+------------+-------------------+------------------|
+| quicklisp | Common Lisp |           | Zach Beane | www.quicklisp.org |                  |
+| asdf      | Common Lisp |           |            |                   |                  |
+| mvn       | Java        |           |            | maven.apache.org  | <2004-07-13 Tue> |
+| npm       | JavaScript  |           |            |                   | <2010-01-12 Tue> |
+| ied       | JavaScript  |           |            |                   |                  |
+| yarn      | JavaScript  |           |            | yarnpkg.com       |                  |
+| gulp      | JavaScript  |           |            | gulpjs.com        | <2013-09-26 Thu> |
+| composer  | PHP         |           |            | getcomposer.org   | <2012-03-01 Thu> |
+| bundler   | Ruby        |           |            |                   |                  |
+| pnpm      | JavaScript  |           |            |                   |                  |
+| ng        | JavaScript  | Angular   |            |                   |                  |
+| cpan      | Perl        |           |            |                   |                  |
+| poetry    | Python      |           |            | python-poetry.org | <2018-02-18 Sun> |
+| pip       | Python      |           |            |                   |                  |
+| cargo     | Rust        |           |            |                   |                  |
+|-----------+-------------+-----------+------------+-------------------+------------------|
+
+# End of wds-devops-pkgs.org

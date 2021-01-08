@@ -1,6 +1,6 @@
 # File      : memo.org
 # Created   : <2020-4-13 Mon 20:18:03 BST>
-# Modified  : <2020-12-03 Thu 14:20:10 GMT>
+# Modified  : <2021-01-05 Tue 11:27:13 GMT>
 # Author    : #Rλatan
 # Synopsis  : <Random hacks and findings>
 
@@ -21,10 +21,10 @@ This file accumulates different findings and hacks around [[https://guix.gnu.org
 - *Guix* uses profile(s) per user to link librarians and executables.
 - Any user can install any package *without privileged access* (no sudo or root).
 - It utilizes symlinks a lot.
-- The hole project utilizes Guile Scheme as a main tool for writing module(s)
+- The whole project utilizes Guile Scheme as a main tool for writing module(s)
   and wrapping package(s) definition, it means no shell|perl|python etc wrappers are used
   on system level at all.
-- The hole system is configured from one single point, it means there is no cluttered configuration
+- The whole system is configured from one single point, it means there is no cluttered configuration
   files in ~/etc/~. The system is defined and described in Guile Scheme file which includes mounts,
   timezone, locales, users, groups, system-wide package(s), system-wide services, kernel type and
   version, kernel parameters etc.
@@ -523,6 +523,50 @@ theory accurate to internal-time-units-per-second.")
 - https://guix.gnu.org/manual/en/html_node/Package-Modules.html
 - https://guix.gnu.org/manual/en/html_node/package-Reference.html
 - https://gitlab.com/pjotrp/guix-notes/-/blob/master/HACKING.org
+** memo-201203143812: How to add new package and make patch for upstream?
+*** Synopsis
+I would like to master ~git~ magic and have hands on skills to make pathches for upstream Guix
+channel.
+*** Require
+- installed Guix
+- cloned source of https://git.savannah.gnu.org/git/guix.git
+*** Actions
+Preparing build environment
+#+begin_src sh
+[ -e $HOME/code ] || mkdir $HOME/code
+[ -e $HOME/cod/git ] || git clone https://git.savannah.gnu.org/git/guix.git $HOME/code/guix
+cd guix
+git checkout master && git pull
+git checkout -b <build-branch-package-defenition>
+guix environment --pure guix --ad-hoc coreutils findutils which
+./bootstrap
+./configure --localstatedir=/var
+make clean-go
+make
+./pre-inst-env which guix
+# it should point to $HOME/code/guix/scripts/guix
+#+end_src
+
+Postbuild checks
+#+begin_example
+./pre-inst-env guix build <package-defenition> --rounds=2
+./pre-inst-env guix lint <package-defenition>
+./pre-inst-env guix size <package-defenition>
+./pre-inst-env guix refresh --list-dependent <package-defenition>
+#+end_example
+
+Preparing patch
+#+begin_src sh
+(build-branch) git checkout -b branch-to-apply
+(branch-to-apply) git checkout <build-branch-package-defenition>
+(build-branch) git add <changed-file>
+(build-branch) git commit -m "<some-valid-description>"
+(build-branch) git format-patch -1 -o $HOME
+(build-branch) git checkout branch-to-apply
+(bracnh-to-apply) git am $HOME/<latest-current-patch>
+#+end_src
+
+Send patch as attachment to /guix-patheches@gnu.org/
 
 * Glossary
 - <<<package>>>
@@ -530,6 +574,7 @@ theory accurate to internal-time-units-per-second.")
 - <<<profile>>>
 - <<<derivation>>>
 - <<<generation>>>
+- <<<channel>>>
 
 
 * References
