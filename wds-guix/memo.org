@@ -1,6 +1,6 @@
 # File      : memo.org
 # Created   : <2020-4-13 Mon 20:18:03 BST>
-# Modified  : <2022-09-24 Sat 21:08:17 BST>
+# Modified  : <2022-09-24 Sat 21:19:57 BST>
 # Author    : #Rλatan
 # Synopsis  : <Random hacks and findings>
 
@@ -615,7 +615,7 @@ system on them:
 ~# swapon /dev/sdd3
 #+end_src
 
-After all manipulations listed about you ends with 3 partitions (UUIDs will be defer from listed
+After all manipulations listed above you ends with 3 partitions (UUIDs will be defer from listed
 below on your system and not reproducible):
 - sdd1 - for bootloader EFI reservation
 - sdd2 - for main system
