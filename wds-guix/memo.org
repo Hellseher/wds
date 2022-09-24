@@ -1,6 +1,6 @@
 # File      : memo.org
 # Created   : <2020-4-13 Mon 20:18:03 BST>
-# Modified  : <2021-01-05 Tue 11:27:13 GMT>
+# Modified  : <2022-09-24 Sat 21:08:17 BST>
 # Author    : #Rλatan
 # Synopsis  : <Random hacks and findings>
 
@@ -426,7 +426,7 @@ guix/scripts/publish.scm          publish-service-type
 #+end_src
 ** memo-201129235006: How to build your own package?
 *** Synopsis
-I am still struggling to make my own package. I was about to pack [[https://github.com/dimitri/pgloader][pgloader]] so let keep some note
+I am still struggling to make my own package. I was about to pack [[https://github.com/dimitri/pgloader][pgloader]] so let's keep some note
 here on how to build and trouble shoot packaging in *Guix*. I started with preparing dependencies
 tree for mising package(s) for ~pgloader~ one of the missing packages was ~cl-log~ making package of
 which I used as an example here.
@@ -523,13 +523,16 @@ theory accurate to internal-time-units-per-second.")
 - https://guix.gnu.org/manual/en/html_node/Package-Modules.html
 - https://guix.gnu.org/manual/en/html_node/package-Reference.html
 - https://gitlab.com/pjotrp/guix-notes/-/blob/master/HACKING.org
-** memo-201203143812: How to add new package and make patch for upstream?
+
+** memo-20201203143812: How to add new package and make patch for upstream?
 *** Synopsis
 I would like to master ~git~ magic and have hands on skills to make pathches for upstream Guix
 channel.
+
 *** Require
 - installed Guix
 - cloned source of https://git.savannah.gnu.org/git/guix.git
+
 *** Actions
 Preparing build environment
 #+begin_src sh
@@ -538,11 +541,12 @@ Preparing build environment
 cd guix
 git checkout master && git pull
 git checkout -b <build-branch-package-defenition>
-guix environment --pure guix --ad-hoc coreutils findutils which
+guix environment --pure guix --ad-hoc coreutils findutils which git gettext autoconf gettext automake
+guix shell -D guix
 ./bootstrap
 ./configure --localstatedir=/var
 make clean-go
-make
+make -j16
 ./pre-inst-env which guix
 # it should point to $HOME/code/guix/scripts/guix
 #+end_src
@@ -567,14 +571,139 @@ Preparing patch
 #+end_src
 
 Send patch as attachment to /guix-patheches@gnu.org/
+** memo-20211219214404: How to add new functionality to Guix and test it?
+*** Synopsis
+I'd like to add ~guix import common-lisp <system>~ functionality to *Guix* core, but where to start
+from?
+# TODO: (Sharlatan-20220924T210228+0100): write about guix extention (WIP in upstream)
+*** Require
+*** Actions
+*** References
+** memo-20220924085251: Deploy from Guix to external drive
+*** Synopsis
+I'd like to test ~guix system init~ to deploy Guix for my ThinkPad T420 laptop. I don't want to use
+any installation scripts or live ISO and aim to utilized "offline" installation of the system which
+is quite new for me (comparing to Debian, Fedora, Ubuntu installation process with live ISO or PXE
+boot).
+
+This memo does not include steps on how to make ThinkPad T420 100% libre and how to use LUKS
+~cryptsetup~ for drive(s) encryption.
+
+*** Require
+- *root* access to the host machine with Guix package manager or system.
+- Hardrive enclosuer, direct connection to SATA or relevant. (I've used ~Orico 2.5 Inch Hard Drive
+  Enclosure Modle: 2588US3~).
+- Future system drive for fresh install (I've used ~KINGSTON SH103S3120G~)
+- Set of esential CLI tools: ~mount~, ~parted~ or ~fdisk~, ~lsblk~, ~blkid~, ~smartctl~, ~mkfs~
+- Enabled noGuix channel https://gitlab.com/nonguix/nonguix for full featured kernel (it's
+  required in case of ThinkPad is not ment to be deployed with ~coreboot~ or ~libreboot~)
+
+*** Actions
+Connect the drive via eclouser or directly and detect it's name:
+: ~# lsblk
+
+In my case, new drive has ~/dev/sdd~ name, now I can start preparing partitions and writing file
+system on them:
+#+begin_src shell
+~# parted -a opt /dev/sdd mkpart primary 0% 1024M
+~# parted /dev/sdd set 1 esp on
+~# mkfs.fat -F32 /dev/sdd1
+~# parted -a opt /dev/sdd mkpart primary 1024M 95%
+~# mkfs.ext4 -L system /dev/sdd2
+~# parted -a opt /dev/sdd mkpart primary 95% 100%
+~# mkswap -L SWAP /dev/sdd3
+~# swapon /dev/sdd3
+#+end_src
+
+After all manipulations listed about you ends with 3 partitions (UUIDs will be defer from listed
+below on your system and not reproducible):
+- sdd1 - for bootloader EFI reservation
+- sdd2 - for main system
+- sdd3 - for SWAP space
+
+#+begin_src shell
+~# lsblk -f /dev/sdd
+NAME   FSTYPE FSVER LABEL  UUID                                 FSAVAIL FSUSE% MOUNTPOINTS
+sdd
+├─sdd1 vfat   FAT32        1007-34E4
+├─sdd2 ext4   1.0   system 024f1aa6-1185-4ad1-a07d-115cdfde7448
+└─sdd3 swap   1     SWAP   26b11234-d944-485a-b633-c3e2252cdce3
+
+~# blkid /dev/sdd*
+/dev/sdd: PTUUID="62fdce6f" PTTYPE="dos"
+/dev/sdd1: UUID="1007-34E4" BLOCK_SIZE="512" TYPE="vfat" PARTUUID="62fdce6f-01"
+/dev/sdd2: LABEL="system" UUID="024f1aa6-1185-4ad1-a07d-115cdfde7448" BLOCK_SIZE="4096" TYPE="ext4" PARTUUID="62fdce6f-02"
+/dev/sdd3: LABEL="SWAP" UUID="26b11234-d944-485a-b633-c3e2252cdce3" TYPE="swap" PARTUUID="62fdce6f-03"
+#+end_src
+
+Prepare mounting point path and mount ~system~ partition to it. I use UUID to exclude any clashes
+with other drives which may have the same labels or names:
+
+#+begin_src shell
+~# mkdir -p /mnt/guix-init
+~# mount UUID="024f1aa6-1185-4ad1-a07d-115cdfde7448" /mnt/guix-init
+~# mkdir -p /mnt/guix-init/etc
+~# df -h | grep sdd
+/dev/sdd2       104G   24K   98G   1% /mnt/guix-init
+#+end_src
+
+Following these steps will finish the deployment of the system on the external drive which will be
+ready to install to the ThinkPad T420 for the first boot.
+
+Copy ~config.scm~ which includes system declaration to the mounted partition ~/mnt/guix-init~.
+Initialize fresh system which downloads substitute(s), copies everything to
+~/mnt/guix-init/gnu/store~, creates system level directory structure and configure users (and much
+more behind the scene!).
+
+*WARNING*: system initialization does not set root password which needs to be changed on the first
+ boot.
+
+#+begin_src shell
+~# cp config.scm /mnt/guix-init/etc
+~# guix system init /mnt/guix-init/etc/config.scm /mnt/guix-init
+#+end_src
+
+If you want to access freshly deployed Guix via SSH after drive installation then generate and copy
+public key for the user to ~/mnt/guix-init/home/<user>/.ssh/id.rsa~
+
+Drive is ready for the first boot now install it to the ThinkPad T420 and *Happy Hacking with Guix*!
+
+*** Issues
+Make sure you installing Grub bootloader to the main drive ~/dev/sdd~ instead of ~/dev/sdd1~ to
+prevent issue like this:
+#+begin_example
+building /gnu/store/27clbvs32dvbr2f6sl4vjisd8wp02piw-install-bootloader.scm.drv... guix system:
+error: '/gnu/store/i11kyhjkqbdkg5j177kh6jk41rbbsss0-grub-2.06/sbin/grub-install --no-floppy
+--target=i386-pc --boot-directory /mnt/guix-init/boot /dev/sdd1' exited with status 1; output
+follows:
+
+  Installing for i386-pc platform.
+  /gnu/store/i11kyhjkqbdkg5j177kh6jk41rbbsss0-grub-2.06/sbin/grub-install: warning: File system
+  `fat' doesn't support embedding.
+  /gnu/store/i11kyhjkqbdkg5j177kh6jk41rbbsss0-grub-2.06/sbin/grub-install: warning: Embedding is not
+  possible. GRUB can only be installed in this setup by using blocklists. However, blocklists are
+  UNRELIABLE and their use is discouraged..
+  /gnu/store/i11kyhjkqbdkg5j177kh6jk41rbbsss0-grub-2.06/sbin/grub-install: error: will not proceed
+  with blocklists.
+
+#+end_example
+
+
+
+*** References
+- https://guix.gnu.org/manual/en/html_node/Invoking-guix-system.html
+- https://guix.gnu.org/manual/en/html_node/Keyboard-Layout-and-Networking-and-Partitioning.html
+- https://systemcrafters.cc/craft-your-system-with-guix/full-system-install/
 
 * Glossary
 - <<<package>>>
 - <<<module>>>
+- <<<PXE>>>>
 - <<<profile>>>
 - <<<derivation>>>
 - <<<generation>>>
 - <<<channel>>>
+- <<<substitute>>>
 
 
 * References
